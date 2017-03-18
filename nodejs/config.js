@@ -1,9 +1,9 @@
-exports.mysql = () =>{
+exports.mysql = () => {
     var mysql = {
         host: 'localhost',
-        user: '',
-        password: '',
-        database: ''
+        user: 'testttt',
+        password: 'testttt',
+        database: 'Mazu'
     };
 
     return mysql;

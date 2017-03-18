@@ -17,5 +17,5 @@ vim /nodejs/config.js
 
 ### Node.js insert data to database
 ```
-nodejs /nodejs/insertBookData.js
+node /nodejs/insertBookData.js
 ```

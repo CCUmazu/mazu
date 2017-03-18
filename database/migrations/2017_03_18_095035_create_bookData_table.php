@@ -15,9 +15,11 @@ class CreateBookDataTable extends Migration
     {
         Schema::create('bookData', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('bookType');
+            $table->integer('bookType')->unsigned();
+            $table->foreign('bookType')->references('id')->on('bookType');
+
             $table->string('author');
-            $table->bigInteger('publicationDate');
+            $table->integer('publicationDate');
             $table->string('title');
             $table->string('bookName');
             $table->string('editor');
@@ -31,6 +33,7 @@ class CreateBookDataTable extends Migration
             $table->string('ISBN');
             $table->string('ISSN');
         });
+
     }
 
     /**
