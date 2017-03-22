@@ -1,8 +1,8 @@
-/vendor
 /node_modules
 Homestead.yaml
 Homestead.json
 .env
+/.idea/
 
 /nodejs/data/
 /nodejs/config.js
