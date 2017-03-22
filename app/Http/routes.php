@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'Auth\authController@signInView');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -24,11 +24,14 @@ Route::get('/', 'Auth\authController@signInView');
 |
 */
 
-Route::group(['prefix' => 'auth'], function() {
-    Route::post('signIn', 'Auth\authController@signIn');
-    Route::post('register', 'Auth\authController@register');
-    Route::get('signOut', 'Auth\authController@signOut');
+Route::group(['middleware' => 'web'], function() {
+    Route::get('/', 'Auth\authController@signInView');
+    Route::group(['prefix' => 'auth'], function() {
+        Route::post('signIn', 'Auth\authController@signIn');
+        Route::post('register', 'Auth\authController@register');
+        Route::get('signOut', 'Auth\authController@signOut');
 
-    Route::get('signIn', 'Auth\authController@signInView');
-    Route::get('register', 'Auth\authController@registerView');
+        Route::get('signIn', 'Auth\authController@signInView');
+        Route::get('register', 'Auth\authController@registerView');
+    });
 });

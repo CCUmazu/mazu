@@ -8,7 +8,7 @@
 @section("content")
 
     @if(Auth::check())
-        <h1>1</h1>
+        <h1>{{Auth::user()->name}}</h1>
     @else
         <h1>0</h1>
     @endif
@@ -17,7 +17,7 @@
     <div id="login">
         <div class="formWrapper">
             <form action="{{url("auth/signIn")}}" method="post">
-		        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                {{ csrf_field() }}
                 <div class="signin-card">
                     <div class="row">
                         <div class="col s12 m4 offset-m4">

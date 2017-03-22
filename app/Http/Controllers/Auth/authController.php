@@ -27,7 +27,7 @@ class authController extends Controller
     public function __construct()
     {
         //$this->middleware('guest', ['except' => 'getLogout']);
-        $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
+        //$this->middleware($this->guestMiddleware(), ['except' => ['logout', 'signInView']]);
        /*$this->auth = $auth;
        $this->registrar = $registrar;
        $this->middleware('guest', ['except' => 'getLogout']);*/
@@ -35,12 +35,7 @@ class authController extends Controller
 
     public function signInView()
     {
-        //Auth::attempt(['account' => 'test', 'password' =>'test']);
-        if(Auth::check()) {
-            return 'login';
-        } else {
-            return view('auth/signIn');
-        }
+        return view('auth/signIn');
     }
 
     public function registerView()
@@ -66,7 +61,9 @@ class authController extends Controller
             'password' => $request->input('password')
         ], $request->input('remember'))) {
             Auth::user()->types = 1;
-            return Redirect::to('/');
+            return 0;
+            /*if(Auth::check()) return Redirect::to('/');
+            else return 0;*/
         } else {
             return 1;
         }
