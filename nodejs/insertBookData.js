@@ -22,7 +22,7 @@ function readFile() {
             'title': line.split(',')[4],
             'bookName': line.split(',')[5],
             'editor': line.split(',')[6],
-            'publishingLoction': line.split(',')[7],
+            'publishingLocation': line.split(',')[7],
             'publisher': line.split(',')[8],
             'period': line.split(',')[9],
             'chapter': line.split(',')[10],

@@ -10,8 +10,18 @@
     @if(Auth::check())
         <h1>{{Auth::user()->name}}</h1>
     @else
-        <h1>0</h1>
+        <h1>Not sign in</h1>
     @endif
+    <div class="input-field col s12">
+        <select>
+            <option value="" disabled selected>Choose your option</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+        </select>
+        <label>Materialize Select</label>
+    </div>
+
 
     <br/><br/><br/><br/>
     <div id="login">

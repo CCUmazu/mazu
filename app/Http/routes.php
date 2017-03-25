@@ -11,8 +11,6 @@
 |
 */
 
-
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -26,12 +24,27 @@
 
 Route::group(['middleware' => 'web'], function() {
     Route::get('/', 'Auth\authController@signInView');
+
     Route::group(['prefix' => 'auth'], function() {
         Route::post('signIn', 'Auth\authController@signIn');
-        Route::post('register', 'Auth\authController@register');
+        // Route::post('register', 'Auth\authController@register');
         Route::get('signOut', 'Auth\authController@signOut');
 
         Route::get('signIn', 'Auth\authController@signInView');
-        Route::get('register', 'Auth\authController@registerView');
+        // Route::get('register', 'Auth\authController@registerView');
+    });
+
+    Route::group(['prefix' => 'api'], function() {
+        Route::group(['prefix' => 'book'], function() {
+            Route::get('get', 'BookController@get');
+            Route::post('create', 'BookController@create');
+            Route::post('update', 'BookController@update');
+            Route::post('delete', 'BookController@delete');
+        });
+    });
+
+    // just for test
+    Route::group(['prefix' => 'test'], function() {
+        Route::get('/', 'BookController@test');
     });
 });
