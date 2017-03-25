@@ -19,11 +19,6 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    public function test()
-    {
-        return view('test/book');
-    }
-
     public function get()
     {
         $bookData = Book::get();

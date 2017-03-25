@@ -29,9 +29,6 @@ Route::group(['middleware' => 'web'], function() {
         Route::post('signIn', 'Auth\authController@signIn');
         // Route::post('register', 'Auth\authController@register');
         Route::get('signOut', 'Auth\authController@signOut');
-
-        Route::get('signIn', 'Auth\authController@signInView');
-        // Route::get('register', 'Auth\authController@registerView');
     });
 
     Route::group(['prefix' => 'api'], function() {
@@ -45,6 +42,8 @@ Route::group(['middleware' => 'web'], function() {
 
     // just for test
     Route::group(['prefix' => 'test'], function() {
-        Route::get('/', 'BookController@test');
+        Route::get('/', 'testController@test');
+        Route::get('signIn', 'testController@signInView');
+        // Route::get('register', 'testController@registerView');
     });
 });

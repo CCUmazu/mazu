@@ -33,16 +33,6 @@ class authController extends Controller
        $this->middleware('guest', ['except' => 'getLogout']);*/
     }
 
-    public function signInView()
-    {
-        return view('auth/signIn');
-    }
-
-    public function registerView()
-    {
-        return view('auth/register');
-    }
-
     public function register(Request $request)
     {
         $account_data['account'] = $request->input('account');
