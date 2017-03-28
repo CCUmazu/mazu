@@ -33,16 +33,6 @@ class authController extends Controller
        $this->middleware('guest', ['except' => 'getLogout']);*/
     }
 
-    public function signInView()
-    {
-        return view('auth/signIn');
-    }
-
-    public function registerView()
-    {
-        return view('auth/register');
-    }
-
     public function register(Request $request)
     {
         $account_data['account'] = $request->input('account');
@@ -50,7 +40,6 @@ class authController extends Controller
         $account_data['password'] = bcrypt($request->input('password'));
         DB::table('users')->insert($account_data);
 
-        //return response()->json(['status' => 0]);
         return Redirect::to('/');
     }
 
@@ -60,12 +49,9 @@ class authController extends Controller
             'account' => $request->input('account'),
             'password' => $request->input('password')
         ], $request->input('remember'))) {
-            Auth::user()->types = 1;
-            return 0;
-            /*if(Auth::check()) return Redirect::to('/');
-            else return 0;*/
+            return Redirect::to('/');
         } else {
-            return 1;
+            return response()->json(['status' => 2, 'message' => 'account or password not correct.']);
         }
     }
 

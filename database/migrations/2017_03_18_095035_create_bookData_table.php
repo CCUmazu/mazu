@@ -23,7 +23,7 @@ class CreateBookDataTable extends Migration
             $table->string('title');
             $table->string('bookName');
             $table->string('editor');
-            $table->string('publishingLoction');
+            $table->string('publishingLocation');
             $table->string('publisher');
             $table->string('period');
             $table->string('chapter');

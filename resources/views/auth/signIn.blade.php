@@ -10,7 +10,7 @@
     @if(Auth::check())
         <h1>{{Auth::user()->name}}</h1>
     @else
-        <h1>0</h1>
+        <h1>Not sign in</h1>
     @endif
 
     <br/><br/><br/><br/>

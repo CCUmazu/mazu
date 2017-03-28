@@ -1,9 +1,6 @@
-var filename = './data/test.csv';
+var filename = './data/test.xlsx';
 var configs = require('./config.js');
-var fs = require('fs');
-var lineReader = require('readline').createInterface({
-    input: fs.createReadStream(filename)
-});
+var xlsx = require('node-xlsx');
 var mysql = require('mysql');
 var connection = mysql.createConnection(configs.mysql());
 
@@ -13,34 +10,33 @@ readFile();
 
 function readFile() {
 
-    // read file start
-    lineReader.on('line', function (line) {
+    // parses a file
+    var data = xlsx.parse(filename)[0]['data'];
+    var i;
+    for(i = 1; i < data.length; i++) {
         var insertData = {
-            'bookType': line.split(',')[1],
-            'author': line.split(',')[2],
-            'publicationDate': line.split(',')[3],
-            'title': line.split(',')[4],
-            'bookName': line.split(',')[5],
-            'editor': line.split(',')[6],
-            'publishingLoction': line.split(',')[7],
-            'publisher': line.split(',')[8],
-            'period': line.split(',')[9],
-            'chapter': line.split(',')[10],
-            'page': line.split(',')[11],
-            'department': line.split(',')[12],
-            'thesis': line.split(',')[13],
-            'ISBN': line.split(',')[15],
-            'ISSN': line.split(',')[16]
+            'bookType': data[i][1] === undefined ? '' : data[i][1],
+            'author': data[i][2] === undefined ? '' : data[i][2],
+            'publicationDate': data[i][3] === undefined ? '' : data[i][3],
+            'title': data[i][4] === undefined ? '' : data[i][4],
+            'bookName': data[i][5] === undefined ? '' : data[i][5],
+            'editor': data[i][6] === undefined ? '' : data[i][6],
+            'publishingLocation': data[i][7] === undefined ? '' : data[i][7],
+            'publisher': data[i][8] === undefined ? '' : data[i][8],
+            'period': data[i][9] === undefined ? '' : data[i][9],
+            'chapter': data[i][10] === undefined ? '' : data[i][10],
+            'page': data[i][11] === undefined ? '' : data[i][11],
+            'department': data[i][12] === undefined ? '' : data[i][12],
+            'thesis': data[i][13] === undefined ? '' : data[i][13],
+            'ISBN': data[i][15] === undefined ? '' : data[i][15],
+            'ISSN': data[i][16] === undefined ? '' : data[i][16]
         };
 
         DBinsert(insertData);
-    });
+    }
 
-    // read file end
-    lineReader.on('close', function () {
-        console.log('insert book data done!');
-        connection.end();
-    });
+    connection.end();
+    console.log('insert book data done!');
 }
 
 function DBinsert(data) {

@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'CreateBookCategoryTable' => $baseDir . '/database/migrations/2017_03_18_081824_create_bookCategory_table.php',
+    'CreateBookClassification' => $baseDir . '/database/migrations/2017_03_27_114248_create_book_classification.php',
     'CreateBookDataTable' => $baseDir . '/database/migrations/2017_03_18_095035_create_bookData_table.php',
     'CreateBookTypeTable' => $baseDir . '/database/migrations/2017_03_18_095028_create_bookType_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2017_03_18_081831_create_users_table.php',
@@ -545,5 +546,6 @@ return array(
     'TestCase' => $baseDir . '/tests/TestCase.php',
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
     'Zizaco\\Entrust\\MigrationCommand' => $vendorDir . '/zizaco/entrust/src/commands/MigrationCommand.php',
+    'bookCategorySeeder' => $baseDir . '/database/seeds/bookCategorySeeder.php',
     'bookTypeSeeder' => $baseDir . '/database/seeds/bookTypeSeeder.php',
 );
