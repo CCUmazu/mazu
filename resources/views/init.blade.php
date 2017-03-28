@@ -25,7 +25,8 @@
 </head>
 <body id="main">
     @yield("content")
-
+    
+    <script src="assets/js/common.js"></script>
     @yield("js")
 </body>
 </html>

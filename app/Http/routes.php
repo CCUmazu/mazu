@@ -35,3 +35,12 @@ Route::group(['middleware' => 'web'], function() {
         Route::get('register', 'Auth\authController@registerView');
     });
 });
+
+Route::get('/welcome', function() {
+    return view('welcome');
+});
+
+Route::get('/', 'WebController@search');
+
+Route::get('/login', 'WebController@login');
+
