@@ -55,4 +55,3 @@ Route::get('/welcome', function() {
 Route::get('/', 'WebController@search');
 
 Route::get('/login', 'WebController@login');
-
