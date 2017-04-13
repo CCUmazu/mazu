@@ -28,7 +28,6 @@ class BookController extends Controller
     public function create(Request $request)
     {
         if(Auth::check()) {
-
             $returnValue = Book::create($request);
             return $returnValue;
         } else {
@@ -36,7 +35,23 @@ class BookController extends Controller
         }
     }
 
+    public function update(Request $request)
+    {
+        if(Auth::check()) {
+            $returnValue = Book::update($request);
+            return $returnValue;
+        } else {
+            return response()->json(['status' => 1, 'message' => 'not sign in.']);
+        }
+    }
 
-
-
+    public function delete(Request $request)
+    {
+        if(Auth::check()) {
+            $returnValue = Book::delete($request->input('id'));
+            return $returnValue;
+        } else {
+            return response()->json(['status' => 1, 'message' => 'not sign in.']);
+        }
+    }
 }

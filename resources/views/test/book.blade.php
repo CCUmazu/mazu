@@ -98,6 +98,7 @@
         $('#submitBtn').click(function() {
             var insertData = {
                 _token: $("meta[name='csrf-token']").attr("content"),
+                id: 50,
                 bookType: $('#bookType').val(),
                 author: $('#author').val(),
                 publicationDate: $('#publicationDate').val(),
@@ -116,8 +117,8 @@
             };
 
             $.ajax({
-                url: '/api/book/create',
-                type: "POST",
+                url: '/api/book/update',
+                type: 'POST',
                 data: insertData,
                 error: function (error) {
                     Materialize.toast('<span>server error!</span>', 5000, 'rounded');
