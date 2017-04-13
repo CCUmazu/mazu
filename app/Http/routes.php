@@ -48,10 +48,10 @@ Route::group(['middleware' => 'web'], function() {
     });
 });
 
-Route::get('/welcome', function() {
-    return view('welcome');
-});
-
+// Guests
 Route::get('/', 'WebController@search');
 
+// Manager
 Route::get('/login', 'WebController@login');
+Route::get('/manage', 'WebController@manage');
+Route::get('/insert', 'WebController@insert');
