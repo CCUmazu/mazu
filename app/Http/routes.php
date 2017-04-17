@@ -46,12 +46,13 @@ Route::group(['middleware' => 'web'], function() {
         Route::get('signIn', 'testController@signInView');
         // Route::get('register', 'testController@registerView');
     });
+
+    // manager
+    Route::group(['prefix' => 'manager'], function() {
+        Route::get('/', 'WebController@login');
+        Route::get('/manage', 'WebController@manage');
+    });
 });
 
 // Guests
 Route::get('/', 'WebController@search');
-
-// Manager
-Route::get('/login', 'WebController@login');
-Route::get('/manage', 'WebController@manage');
-Route::get('/insert', 'WebController@insert');

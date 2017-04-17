@@ -4,7 +4,7 @@ $(function() {
         if(options.type.toLowerCase() === 'post') {
             options.data = options.data || '';
             options.data += options.data?'&':'';
-            options.data += '_token' + csrf_token;
+            options.data += '_token=' + csrf_token;
         }
     });
 });

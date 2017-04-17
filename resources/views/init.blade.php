@@ -33,7 +33,7 @@
     -->
 
     <!-- common function -->
-    <script src="assets/js/common.js"></script>
+    <script src="/assets/js/common.js"></script>
 
     @yield("js")
 </body>
