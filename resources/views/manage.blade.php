@@ -1,6 +1,7 @@
 @extends('init')
 
 @section('css')
+  <link rel="stylesheet" href="/assets/css/manage.css">
 @stop
 
 @section('js')

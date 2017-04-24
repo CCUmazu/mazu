@@ -1,0 +1,12 @@
+#edit-modal {
+  max-height: 650px;
+}
+#edit-modal .row {
+  margin-bottom: 0px;
+}
+#edit-modal .col {
+  margin-top: 0px;
+}
+#edit-modal .edit {
+  display: none;
+}

@@ -162,7 +162,10 @@ function faker(ending) {
 
 (function() {
     $('select').material_select();
-    $('#edit-modal').modal();
+    $('#edit-modal').modal({
+      startingTop: '0%',
+      endingTop: '0%'
+    });
 
     $('#open-edit-modal').click(function() {
         $('#edit-modal').modal('open');
