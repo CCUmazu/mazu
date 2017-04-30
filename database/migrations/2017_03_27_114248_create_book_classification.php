@@ -19,6 +19,7 @@ class CreateBookClassification extends Migration
 
             $table->integer('categoryId')->unsigned();
             $table->foreign('categoryId')->references('id')->on('bookCategory');
+            $table->timestamps();
         });
 
     }

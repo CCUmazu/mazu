@@ -25,6 +25,15 @@
             </select>
         </div>
         <div class="input-field col s6 offset-s3">
+            <select id="bookClassification" multiple>
+                <option value="" disabled selected>Classification</option>
+                @foreach($category as $categories)
+                    <option value="{{$categories->id}}">{{$categories->name}}</option>
+                @endforeach
+            </select>
+            <label>Materialize Multiple Select</label>
+        </div>
+        <div class="input-field col s6 offset-s3">
             <input id="author" type="text" class="validate">
             <label for="author">author</label>
         </div>
@@ -98,8 +107,9 @@
         $('#submitBtn').click(function() {
             var insertData = {
                 _token: $("meta[name='csrf-token']").attr("content"),
-                id: 50,
+                id: 14,
                 bookType: $('#bookType').val(),
+                bookClassification: $('#bookClassification').val(),
                 author: $('#author').val(),
                 publicationDate: $('#publicationDate').val(),
                 title: $('#title').val(),
@@ -113,7 +123,7 @@
                 department: $('#department').val(),
                 thesis: $('#thesis').val(),
                 ISBN: $('#ISBN').val(),
-                ISSN: $('#ISSN').val()
+                ISSN: $('#ISSN').val(),
             };
 
             $.ajax({

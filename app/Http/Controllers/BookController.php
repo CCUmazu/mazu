@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 //use App\User;
+use App\Objects\Category;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -29,6 +30,7 @@ class BookController extends Controller
     {
         if(Auth::check()) {
             $returnValue = Book::create($request);
+
             return $returnValue;
         } else {
             return response()->json(['status' => 1, 'message' => 'not sign in.']);
