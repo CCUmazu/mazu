@@ -3,15 +3,39 @@ var paging = {
     curPage: 1,
     perPage: 10,
     totalPage: 0,
-
+    
     drawContent: function() {
+        var text = '';
+        var i;
+        var j;
+
+        for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
+          text += `<div class="row result-item">`;
+          text += `<div class="col s9">`;
+          text += `<div class="row title"><b>${this.data[i].title}</b></div>`;
+          text += `<div class="row author">${this.data[i].author}</div>`;
+          text += `<div class="row"></div>`;
+          text += ``;
+          text += ``;
+          text += ``;
+          text += `</div>`;// end s9
+          text += `<div class="col s3">`;
+          text += `<div class="row"><button class="btn waves-effect">Export RIS</button></div>`
+          text += `</div>`;// end s3
+          text += `</div>`;// end result-item
+        }
+
+        $('.content-container').html(text);   
+    },
+
+    drawTable: function() {
         var text = '';
         var i;
         var j;
         
 
         for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
-            text += `<tr data-target="detail" data-dindex="${i}">`;
+            text += `<tr data-target="detail-modal" data-dindex="${i}">`;
             text += `<td>${this.data[i].author}</td>`;
             text += `<td>${this.data[i].publicationDate}</td>`;
             text += `<td>${this.data[i].title}</td>`;
@@ -117,7 +141,10 @@ function faker(ending) {
 
 (function() {
     $('select').material_select();
-    $('.modal').modal();
+    $('.modal').modal({
+      startingTop: '0%',
+      endingTop: '0%'
+    });
 
     paging.data = faker(314);
     paging.drawContent();

@@ -1,5 +1,5 @@
 <!-- Modal Structure -->
-<div id="detail" class="modal">
+<div id="detail-modal" class="modal">
     <div class="modal-content">
         <div class="row">
             <div class="col s6">

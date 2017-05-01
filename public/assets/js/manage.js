@@ -9,6 +9,30 @@ var paging = {
         var i;
         var j;
 
+        for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
+          text += `<div class="row result-item">`;
+          text += `<div class="col s9">`;
+          text += `<div class="row title"><h2>${data[i].title}</h2></div>`;
+          text += `<div class="row author">${data[i].author}</div>`;
+          text += `<div class="row"></div>`;
+          text += ``;
+          text += ``;
+          text += ``;
+          text += `</div>`;// end s9
+          text += `<div class="col s3">`;
+          text += `<div class="row"><button class="btn waves-effect">Export RIS</button></div>`
+          text += `</div>`;// end s3
+          text += `</div>`;// end result-item
+        }
+
+        $('.content-container').html(text);
+    },
+
+    drawTable: function() {
+        var text = '';
+        var i;
+        var j;
+
 
         for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
             text += `<tr>`;
@@ -117,7 +141,9 @@ var form = {
 
         $('#createBtn').click(function() {
             var request = outside.get();
-
+            
+            console.log(request);
+            return;
             $.post('/api/book/create', request, function(response) {
                 console.log(response);
             }).fail(function() {

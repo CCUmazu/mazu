@@ -1,3 +1,86 @@
+#edit-modal {
+  max-height: 720px;
+}
+
+body {
+  background-color: rgb(251, 232, 211);
+}
+
+.container {
+  background-color: white;
+  width: 90%;
+}
+
+.header-container {
+  margin-bottom: 30px;
+}
+
+.header-title {
+  color: white; 
+  background-color: #283C63;
+  border-top: 30px;
+  height: 40px;
+  font-size: 24px;
+}
+
+#header-image {
+  width: 90%;
+  height: 360px;
+  background-image: url("header.png");
+  background-repeat: no-repeat;
+  background-position: right;
+  background-attachment: fixed;
+  background-size: cover;
+  position: absolute;
+  left: 5%;
+  top: 40px;
+  opacity: 0.7;
+}
+
+.search-container {
+  height: 400px;
+}
+
+.search-block {
+  width: 80%;
+  margin: 0 auto;
+  background-color: rgba(22, 27, 29, 0.9);
+  color: white;
+  border-radius: 10px 10px 10px 10px;
+  padding-bottom: 30px;
+  top: 40px;
+  position: relative;
+}
+
+.search-block #search-btn {
+  background-color: #283C63;
+}
+
+.content-container {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.content-container .result-item {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.result-item .col{
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.result-item .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.result-item .title {
+  color: #265985;
+  font-size: 1.05em;
+}
+
 .d-title {
     
 }
@@ -5,3 +88,5 @@
 .d-content {
     
 }
+
+
