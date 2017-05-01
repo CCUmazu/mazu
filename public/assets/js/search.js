@@ -113,29 +113,61 @@ function getData() {
     });
 }
 
-function faker(ending) {
+function genData(ending) {
     var i;
     var data = [];
+    var category = [
+      '章節',
+      '通論',
+      '信仰與經典',
+      '媽祖文化與比較研究',
+      '歷史、事蹟與傳說',
+      '儀式與祭典',
+      '進香',
+      '祭祀活動與組織',
+      '媽祖廟糾紛與爭論',
+      '兩岸交流',
+      '媽祖信仰與政治',
+      '媽祖信仰的傳播',
+      '觀光與文化政策',
+      '信仰與社區組織',
+      '區域媽祖廟研究',
+      '單一媽祖廟研究(含廟誌)',
+      '建築、藝術',
+      '社會經濟',
+      '其他'
+    ];
+
+    var type = [
+      '專書',
+      '專書論文',
+      '期刊論',
+      '碩博士論文'
+    ];
+
+    faker.locale = 'zh_TW';
     for(i=0; i<ending; i++) {
         data.push({
-            bookType: Math.floor(Math.random()*10) % 4,
-            author: `${i}sdfsd`,
-            publicationDate: 'sfdfd',
-            title: 'sdfsdf',
-            bookName: 'asdasd',
-            editor: 'sdfsdf',
-            publishingLocation: 'sfsdf',
-            publisher: 'sdfsdf',
-            period: 'sdfsdf',
-            chapter: 'sdfsdf',
-            page: 'sfsdf',
-            department: 'sdfsdf',
-            thesis: 'sdfs',
-            ISBN: 'sdfsdf',
-            ISSN: 'sssss'
+            category: category[Math.floor(Math.random()*100) % 18],
+            bookType: type[Math.floor(Math.random()*10) % 4],
+            author: faker.name.firstName() + faker.name.lastName(),
+            publicationDate: faker.date.past(),
+            title: faker.lorem.sentence(),
+            bookName: faker.lorem.word(),
+            editor: faker.name.firstName() + faker.name.lastName(),
+            publishingLocation: faker.address.city(),
+            publisher: faker.company.companyName(),
+            period: Math.floor(Math.random()*100) % 58 + 14,
+            chapter: Math.floor(Math.random()*100) % 30 + 1,
+            page: Math.floor(Math.random()*100) % 58 + 1,
+            department: faker.commerce.department(),
+            thesis: faker.lorem.word(),
+            ISBN: faker.phone.phoneNumberFormat(),
+            ISSN: faker.phone.phoneNumberFormat()
         });
     }
-
+    
+    console.log(data);
     return data;
 }
 
@@ -146,7 +178,7 @@ function faker(ending) {
       endingTop: '0%'
     });
 
-    paging.data = faker(314);
+    paging.data = genData(137);
     paging.drawContent();
     paging.drawPage();
 })();

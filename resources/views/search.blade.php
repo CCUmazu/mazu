@@ -17,7 +17,7 @@
         <div id="header-image"></div>
         <div class="search-block">
           <div class="row">
-            <div class="col s9">
+            <div class="col s8 offset-s2">
               <div class="input-field">
                 <input id="search-word" type="text">
                 <label for="search-word">請輸入搜尋的關鍵字</label>
@@ -25,7 +25,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col s12">
+            <div class="col s8 offset-s2">
               <div class="input-field">
                 <select id="search-type">
                   <option value="9999" selected>全部類別</option>
