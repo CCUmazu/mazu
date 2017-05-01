@@ -42,7 +42,6 @@
             </div>
           </div>
         </div>
-
       </div>  
     </div>
     <div class="content-container">
@@ -64,6 +63,8 @@
       -->
     </div>
     <div id="page-number-container"></div>
+  
+    @include('footer')
   </div>
 @stop
 

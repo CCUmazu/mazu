@@ -20,7 +20,9 @@ var paging = {
           text += ``;
           text += `</div>`;// end s9
           text += `<div class="col s3">`;
-          text += `<div class="row"><button class="btn waves-effect">Export RIS</button></div>`
+          text += `<div class="row button-wrapper center">`;
+          text += `<button class="btn btn-default">匯出 RIS</button>`;
+          text += `</div>`;// end button-wrapper
           text += `</div>`;// end s3
           text += `</div>`;// end result-item
         }

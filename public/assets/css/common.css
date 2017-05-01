@@ -1,0 +1,13 @@
+footer.page-footer {
+  padding-top: 0;
+  min-height: 40px;
+  background-color: #283C63;
+  color: white;
+}
+footer.page-footer > .container {
+  background-color: inherit;
+}
+
+footer.page-footer .row {
+  margin-bottom: 0;
+}

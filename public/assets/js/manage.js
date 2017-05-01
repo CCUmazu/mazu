@@ -5,27 +5,29 @@ var paging = {
     totalPage: 0,
 
     drawContent: function() {
-        var text = '';
-        var i;
-        var j;
+      var text = '';
+      var i;
+      var j;
 
-        for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
-          text += `<div class="row result-item">`;
-          text += `<div class="col s9">`;
-          text += `<div class="row title"><h2>${data[i].title}</h2></div>`;
-          text += `<div class="row author">${data[i].author}</div>`;
-          text += `<div class="row"></div>`;
-          text += ``;
-          text += ``;
-          text += ``;
-          text += `</div>`;// end s9
-          text += `<div class="col s3">`;
-          text += `<div class="row"><button class="btn waves-effect">Export RIS</button></div>`
-          text += `</div>`;// end s3
-          text += `</div>`;// end result-item
-        }
+      for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
+        text += `<div class="row result-item">`;
+        text += `<div class="col s9">`;
+        text += `<div class="row title"><b>${this.data[i].title}</b></div>`;
+        text += `<div class="row author">${this.data[i].author}</div>`;
+        text += `<div class="row"></div>`;
+        text += ``;
+        text += ``;
+        text += ``;
+        text += `</div>`;// end s9
+        text += `<div class="col s3">`;
+        text += `<div class="row button-wrapper center">`;
+        text += `<button class="btn btn-default">匯出 RIS</button>`;
+        text += `</div>`;// end button-wrapper
+        text += `</div>`;// end s3
+        text += `</div>`;// end result-item
+      }
 
-        $('.content-container').html(text);
+      $('.content-container').html(text);   
     },
 
     drawTable: function() {
@@ -160,31 +162,64 @@ function getData() {
     });
 }
 
-function faker(ending) {
+function genData(ending) {
     var i;
     var data = [];
+    var category = [
+      '章節',
+      '通論',
+      '信仰與經典',
+      '媽祖文化與比較研究',
+      '歷史、事蹟與傳說',
+      '儀式與祭典',
+      '進香',
+      '祭祀活動與組織',
+      '媽祖廟糾紛與爭論',
+      '兩岸交流',
+      '媽祖信仰與政治',
+      '媽祖信仰的傳播',
+      '觀光與文化政策',
+      '信仰與社區組織',
+      '區域媽祖廟研究',
+      '單一媽祖廟研究(含廟誌)',
+      '建築、藝術',
+      '社會經濟',
+      '其他'
+    ];
+
+    var type = [
+      '專書',
+      '專書論文',
+      '期刊論',
+      '碩博士論文'
+    ];
+
+    faker.locale = 'zh_TW';
     for(i=0; i<ending; i++) {
         data.push({
-            bookType: Math.floor(Math.random()*10) % 4,
-            author: `${i}sdfsd`,
-            publicationDate: 'sfdfd',
-            title: 'sdfsdf',
-            bookName: 'asdasd',
-            editor: 'sdfsdf',
-            publishingLocation: 'sfsdf',
-            publisher: 'sdfsdf',
-            period: 'sdfsdf',
-            chapter: 'sdfsdf',
-            page: 'sfsdf',
-            department: 'sdfsdf',
-            thesis: 'sdfs',
-            ISBN: 'sdfsdf',
-            ISSN: 'sssss'
+            category: category[Math.floor(Math.random()*100) % 18],
+            bookType: type[Math.floor(Math.random()*10) % 4],
+            author: faker.name.firstName() + faker.name.lastName(),
+            publicationDate: faker.date.past(),
+            title: faker.lorem.sentence(),
+            bookName: faker.lorem.word(),
+            editor: faker.name.firstName() + faker.name.lastName(),
+            publishingLocation: faker.address.city(),
+            publisher: faker.company.companyName(),
+            period: Math.floor(Math.random()*100) % 58 + 14,
+            chapter: Math.floor(Math.random()*100) % 30 + 1,
+            page: Math.floor(Math.random()*100) % 58 + 1,
+            department: faker.commerce.department(),
+            thesis: faker.lorem.word(),
+            ISBN: faker.phone.phoneNumberFormat(),
+            ISSN: faker.phone.phoneNumberFormat()
         });
     }
-
+    
+    console.log(data);
     return data;
 }
+
 
 (function() {
     $('select').material_select();
@@ -197,7 +232,7 @@ function faker(ending) {
         $('#edit-modal').modal('open');
     });
 
-    paging.data = faker(314);
+    paging.data = genData(137);
     paging.drawContent();
     paging.drawPage();
 
