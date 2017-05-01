@@ -15,13 +15,15 @@ use Auth;
 use DB;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
-
+use App\Objects\Category;
+use App\Objects\Classification;
 
 class testController extends Controller
 {
     public function test()
     {
-        return view('test/book');
+        $data = Category::get();
+        return view('test/book')->with('category', $data['categoryData']);
     }
 
     public function signInView()
