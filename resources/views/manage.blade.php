@@ -51,7 +51,7 @@
         </div>
       </div>
       <div class="tool-container">
-        <div class="row">
+        <div class="row right-align">
           <button class="btn btn-default" id="open-edit-modal" data-target="edit-modal">新增</button>
         </div>
       </div>

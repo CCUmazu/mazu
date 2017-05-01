@@ -1,242 +1,277 @@
 var paging = {
-    data: [],
-    curPage: 1,
-    perPage: 10,
-    totalPage: 0,
+  data: [],
+  curPage: 1,
+  perPage: 10,
+  totalPage: 0,
 
-    drawContent: function() {
-      var text = '';
-      var i;
-      var j;
+  drawContent: function() {
+    var text = '';
+    var i;
+    var j;
 
-      for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
-        text += `<div class="row result-item">`;
-        text += `<div class="col s9">`;
-        text += `<div class="row title"><b>${this.data[i].title}</b></div>`;
-        text += `<div class="row author">${this.data[i].author}</div>`;
-        text += `<div class="row"></div>`;
-        text += ``;
-        text += ``;
-        text += ``;
-        text += `</div>`;// end s9
-        text += `<div class="col s3">`;
-        text += `<div class="row button-wrapper center">`;
-        text += `<button class="btn btn-default">匯出 RIS</button>`;
-        text += `</div>`;// end button-wrapper
-        text += `</div>`;// end s3
-        text += `</div>`;// end result-item
-      }
-
-      $('.content-container').html(text);   
-    },
-
-    drawTable: function() {
-        var text = '';
-        var i;
-        var j;
-
-
-        for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
-            text += `<tr>`;
-            text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].author}</td>`;
-            text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].publicationDate}</td>`;
-            text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].title}</td>`;
-            text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].bookName}</td>`;
-            text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].editor}</td>`;
-            text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].publishingLocation}</td>`;
-            text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].publisher}</td>`;
-            text += `<td><button class="btn btn-default red">刪除</button></td>`;
-            text += `</tr>`;
-        }
-
-        $('tbody').html(text);
-    },
-
-    drawPage: function() {
-        var text = '';
-        var i;
-        var j;
-
-        var totalPage = Math.floor(this.data.length / this.perPage) + 1;
-        var leftPage = Math.max(1, this.curPage - 5);
-        var rightPage = Math.min(leftPage + 9, totalPage);
-
-        text += `<ul class="pagination center">`;
-        for(i=leftPage, j=0; i<=rightPage && j<10; i++, j++) {
-            if(this.curPage == i) {
-                text += `<li class="active" data-pindex="${i}"><a>${i}</a></li>`;
-            } else {
-                text += `<li class="waves-effect" data-pindex="${i}"><a>${i}</a></li>`;
-            }
-        }
-        text += `</ul>`;
-
-        $('#page-number-container').html(text);
-        this.pagingEvent();
-    },
-
-    pagingEvent: function() {
-        var outside = this;
-        $('.pagination li').unbind('click');
-        $('.pagination li').click(function() {
-            outside.curPage = $(this).data('pindex');
-            outside.drawContent();
-            outside.drawPage();
-        });
-
-        $('tbody tr .view-detail').unbind('click');
-        $('tbody tr .view-detail').click(function() {
-            var dindex = $(this).data('dindex');
-            var data = outside.data[dindex];
-
-        });
+    for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
+      text += `<div class="row result-item">`;
+      text += `<div class="col s9 result-item-content" data-dindex="${i}">`;
+      text += `<div class="row title"><b>${this.data[i].title}</b></div>`;
+      text += `<div class="row author">${this.data[i].author}</div>`;
+      text += `</div>`;// end s9
+      text += `<div class="col s3">`;
+      text += `<div class="row button-wrapper center">`;
+      text += `<button class="btn btn-default red item-delete-btn" data-dindex="${i}">刪除</button>`;
+      text += `</div>`;// end button-wrapper
+      text += `</div>`;// end s3
+      text += `</div>`;// end result-item
     }
+
+    $('.content-container').html(text);   
+    form.formEvent();
+  },
+
+  drawTable: function() {
+    var text = '';
+    var i;
+    var j;
+
+
+    for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
+      text += `<tr>`;
+      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].author}</td>`;
+      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].publicationDate}</td>`;
+      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].title}</td>`;
+      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].bookName}</td>`;
+      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].editor}</td>`;
+      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].publishingLocation}</td>`;
+      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].publisher}</td>`;
+      text += `<td><button class="btn btn-default red">刪除</button></td>`;
+      text += `</tr>`;
+    }
+
+    $('tbody').html(text);
+  },
+
+  drawPage: function() {
+    var text = '';
+    var i;
+    var j;
+
+    var totalPage = Math.floor(this.data.length / this.perPage) + 1;
+    var leftPage = Math.max(1, this.curPage - 5);
+    var rightPage = Math.min(leftPage + 9, totalPage);
+
+    text += `<ul class="pagination center">`;
+    for(i=leftPage, j=0; i<=rightPage && j<10; i++, j++) {
+      if(this.curPage == i) {
+        text += `<li class="active" data-pindex="${i}"><a>${i}</a></li>`;
+      } else {
+        text += `<li class="waves-effect" data-pindex="${i}"><a>${i}</a></li>`;
+      }
+    }
+    text += `</ul>`;
+
+    $('#page-number-container').html(text);
+    this.pagingEvent();
+  },
+
+  pagingEvent: function() {
+    var outside = this;
+    $('.pagination li').unbind('click');
+    $('.pagination li').click(function() {
+      outside.curPage = $(this).data('pindex');
+      outside.drawContent();
+      outside.drawPage();
+    });
+
+    /*
+    $('tbody tr .view-detail').unbind('click');
+    $('tbody tr .view-detail').click(function() {
+      var dindex = $(this).data('dindex');
+      var data = outside.data[dindex];
+
+    });
+    */
+  }
 };
 
 var form = {
-    empty: function() {
+  empty: function() {
+    $('#author').val('');
+    $('#publicationDate').val('');
+    $('#title').val('');
+    $('#bookName').val('');
+    $('#editor').val('');
+    $('#publishingLocation').val('');
+    $('#publisher').val('');
+    $('#period').val('');
+    $('#chapter').val('');
+    $('#page').val('');
+    $('#department').val('');
+    $('#thesis').val('');
+    $('#ISBN').val('');
+    $('#ISSN').val(''); 
+    
+    Materialize.updateTextFields();
+    $('select').material_select();
+  },
 
-    },
+  get: function() {
+    var rtl = {
+      bookType: (Math.floor(Math.random()*10) % 4) + 1,
+      author: $('#author').val(),
+      publicationDate: $('#publicationDate').val(),
+      title: $('#title').val(),
+      bookName: $('#bookName').val(),
+      editor: $('#editor').val(),
+      publishingLocation: $('#publishingLocation').val(),
+      publisher: $('#publisher').val(),
+      period: $('#period').val(),
+      chapter: $('#chapter').val(),
+      page: $('#page').val(),
+      department: $('#department').val(),
+      thesis: $('#thesis').val(),
+      ISBN: $('#ISBN').val(),
+      ISSN: $('#ISSN').val()
+    };
 
-    get: function() {
-        var rtl = {
-            bookType: (Math.floor(Math.random()*10) % 4) + 1,
-            author: $('#author').val(),
-            publicationDate: $('#publicationDate').val(),
-            title: $('#title').val(),
-            bookName: $('#bookName').val(),
-            editor: $('#editor').val(),
-            publishingLocation: $('#publishingLocation').val(),
-            publisher: $('#publisher').val(),
-            period: $('#period').val(),
-            chapter: $('#chapter').val(),
-            page: $('#page').val(),
-            department: $('#department').val(),
-            thesis: $('#thesis').val(),
-            ISBN: $('#ISBN').val(),
-            ISSN: $('#ISSN').val()
-        };
+    return rtl;
+  },
 
-        return rtl;
-    },
+  fill: function(data) {
+    this.empty();
 
-    fill: function(data) {
-        $('#bookType').val();
-        $('#author').val();
-        $('#publicationDate').val();
-        $('#title').val();
-        $('#bookName').val();
-        $('#editor').val();
-        $('#publishingLocation').val();
-        $('#publisher').val();
-        $('#period').val();
-        $('#chapter').val();
-        $('#page').val();
-        $('#department').val();
-        $('#thesis').val();
-        $('#ISBN').val();
-        $('#ISSN').val(); 
-    },
+    $('#author').val(data['author']);
+    $('#publicationDate').val(data['publicationDate']);
+    $('#title').val(data['title']);
+    $('#bookName').val(data['bookName']);
+    $('#editor').val(data['editor']);
+    $('#publishingLocation').val(data['publishingLocation']);
+    $('#publisher').val(data['publisher']);
+    $('#period').val(data['period']);
+    $('#chapter').val(data['chapter']);
+    $('#page').val(data['page']);
+    $('#department').val(data['department']);
+    $('#thesis').val(data['thesis']);
+    $('#ISBN').val(data['ISBN']);
+    $('#ISSN').val(data['ISSN']); 
 
-    formEvent: function() {
-        var outside = this;
+    Materialize.updateTextFields();
+    $('select').material_select();
+  },
 
-        $('#createBtn').click(function() {
-            var request = outside.get();
-            
-            console.log(request);
-            return;
-            $.post('/api/book/create', request, function(response) {
-                console.log(response);
-            }).fail(function() {
-                console.log('server error');
-            });
-        });
-    }
+  formEvent: function() {
+    var outside = this;
+
+    $('#createBtn').unbind('click');
+    $('#createBtn').click(function() {
+      var request = outside.get();
+
+      console.log(request);
+      return;
+      $.post('/api/book/create', request, function(response) {
+        console.log(response);
+      }).fail(function() {
+        console.log('server error');
+      });
+    });
+
+    $('#open-edit-modal').unbind('click');
+    $('#open-edit-modal').click(function() {
+      $('#edit-modal .create').css('display', 'block');
+      $('#edit-modal .edit').css('display', 'none');
+      outside.empty();
+
+      $('#edit-modal').modal('open');
+    });
+
+    $('.result-item-content').unbind('click');
+    $('.result-item-content').click(function() {
+      $('#edit-modal .create').css('display', 'none');
+      $('#edit-modal .edit').css('display', 'block');
+
+      var dindex = $(this).data('dindex');
+      console.log(paging.data[dindex], dindex);
+      outside.fill(paging.data[dindex]);
+
+      $('#edit-modal').modal('open');
+    });
+  }
 };
 
 function getData() {
-    var request = {};
-    $.get('/api/book/get', request, function(response) {
-        console.log(response);
-    });
+  var request = {};
+  $.get('/api/book/get', request, function(response) {
+    console.log(response);
+  });
 }
 
 function genData(ending) {
-    var i;
-    var data = [];
-    var category = [
-      '章節',
-      '通論',
-      '信仰與經典',
-      '媽祖文化與比較研究',
-      '歷史、事蹟與傳說',
-      '儀式與祭典',
-      '進香',
-      '祭祀活動與組織',
-      '媽祖廟糾紛與爭論',
-      '兩岸交流',
-      '媽祖信仰與政治',
-      '媽祖信仰的傳播',
-      '觀光與文化政策',
-      '信仰與社區組織',
-      '區域媽祖廟研究',
-      '單一媽祖廟研究(含廟誌)',
-      '建築、藝術',
-      '社會經濟',
-      '其他'
-    ];
+  var i;
+  var data = [];
+  var category = [
+    '章節',
+    '通論',
+    '信仰與經典',
+    '媽祖文化與比較研究',
+    '歷史、事蹟與傳說',
+    '儀式與祭典',
+    '進香',
+    '祭祀活動與組織',
+    '媽祖廟糾紛與爭論',
+    '兩岸交流',
+    '媽祖信仰與政治',
+    '媽祖信仰的傳播',
+    '觀光與文化政策',
+    '信仰與社區組織',
+    '區域媽祖廟研究',
+    '單一媽祖廟研究(含廟誌)',
+    '建築、藝術',
+    '社會經濟',
+    '其他'
+  ];
 
-    var type = [
-      '專書',
-      '專書論文',
-      '期刊論',
-      '碩博士論文'
-    ];
+  var type = [
+    '專書',
+    '專書論文',
+    '期刊論',
+    '碩博士論文'
+  ];
 
-    faker.locale = 'zh_TW';
-    for(i=0; i<ending; i++) {
-        data.push({
-            category: category[Math.floor(Math.random()*100) % 18],
-            bookType: type[Math.floor(Math.random()*10) % 4],
-            author: faker.name.firstName() + faker.name.lastName(),
-            publicationDate: faker.date.past(),
-            title: faker.lorem.sentence(),
-            bookName: faker.lorem.word(),
-            editor: faker.name.firstName() + faker.name.lastName(),
-            publishingLocation: faker.address.city(),
-            publisher: faker.company.companyName(),
-            period: Math.floor(Math.random()*100) % 58 + 14,
-            chapter: Math.floor(Math.random()*100) % 30 + 1,
-            page: Math.floor(Math.random()*100) % 58 + 1,
-            department: faker.commerce.department(),
-            thesis: faker.lorem.word(),
-            ISBN: faker.phone.phoneNumberFormat(),
-            ISSN: faker.phone.phoneNumberFormat()
-        });
-    }
-    
-    console.log(data);
-    return data;
+  faker.locale = 'zh_TW';
+  for(i=0; i<ending; i++) {
+    data.push({
+      category: category[Math.floor(Math.random()*100) % 18],
+      bookType: type[Math.floor(Math.random()*10) % 4],
+      author: faker.name.firstName() + faker.name.lastName(),
+      publicationDate: faker.date.past(),
+      title: faker.lorem.sentence(),
+      bookName: faker.lorem.word(),
+      editor: faker.name.firstName() + faker.name.lastName(),
+      publishingLocation: faker.address.city(),
+      publisher: faker.company.companyName(),
+      period: Math.floor(Math.random()*100) % 58 + 14,
+      chapter: Math.floor(Math.random()*100) % 30 + 1,
+      page: Math.floor(Math.random()*100) % 58 + 1,
+      department: faker.commerce.department(),
+      thesis: faker.lorem.word(),
+      ISBN: faker.phone.phoneNumberFormat(),
+      ISSN: faker.phone.phoneNumberFormat()
+    });
+  }
+
+  console.log(data);
+  return data;
 }
 
 
 (function() {
-    $('select').material_select();
-    $('#edit-modal').modal({
-      startingTop: '0%',
-      endingTop: '0%'
-    });
+  $('select').material_select();
+  $('#edit-modal').modal({
+    startingTop: '0%',
+    endingTop: '0%'
+  });
 
-    $('#open-edit-modal').click(function() {
-        $('#edit-modal').modal('open');
-    });
+  paging.data = genData(137);
+  paging.drawContent();
+  paging.drawPage();
 
-    paging.data = genData(137);
-    paging.drawContent();
-    paging.drawPage();
-
-    form.formEvent();
-
-    getData();
+  getData();
 })();

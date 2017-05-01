@@ -57,6 +57,13 @@ body {
 .search-block #search-btn {
   background-color: #283C63;
 }
+/*
+ * tool
+ */
+.tool-container {
+  width: 90%;
+
+}
 
 /*
  * modal
@@ -70,9 +77,6 @@ body {
 }
 #edit-modal .col {
   margin-top: 0px;
-}
-#edit-modal .edit {
-  display: none;
 }
 /*
  * content

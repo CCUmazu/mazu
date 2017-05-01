@@ -130,16 +130,16 @@
   <div class="modal-footer">
     <div class="row">
       <div class="col s12 create">
-        <button id="createBtn" class="btn btn-warning">
+        <button id="createBtn" class="btn">
           新增<i class="material-icons right">send</i>
         </button>
       </div>
       <div class="col s12 edit">
-        <button id="editBtn" class="btn btn-warning">
-          更新<i class="material-icons right">send</i>
-        </button>
-        <button id="deleteBtn" class="btn btn-warning">
+        <button id="deleteBtn" class="btn red">
           刪除<i class="material-icons right">send</i>
+        </button>
+        <button id="editBtn" class="btn lime">
+          更新<i class="material-icons right">send</i>
         </button>
       </div>
     </div>
