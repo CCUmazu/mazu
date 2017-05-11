@@ -14,8 +14,9 @@ class Classify
 
     static function create($bookId, $classificationData)
     {
-        foreach ($classificationData as $key => $value) {
-            DB::table('bookClassification')->insertGetId(['bookId' => $bookId, 'categoryId' => $value]);
+        $typeId = $classificationData['typeId'];
+        foreach ($classificationData['classification'] as $key => $value) {
+            DB::table('bookClassification')->insertGetId(['bookId' => $bookId, 'typeId' => $typeId, 'categoryId' => $value]);
         }
     }
 

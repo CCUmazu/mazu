@@ -18,8 +18,10 @@ class Book
         if(Auth::check()) {
             foreach ($request->input() as $key => $value) {
                 if($key == '_token') continue;
-                else if($key == 'bookClassification') $classificationData = $value;
+                else if($key == 'bookClassification') $classificationData['classification'] = $value;
                 else $createData[$key] = $value;
+
+                if($key == 'bookType') $classificationData['typeId'] = $value;
             }
 
             if(!empty($createData)) {
@@ -46,8 +48,10 @@ class Book
                 preg_match("/_token/", $key, $matches);
                 if($key == 'id') $id = $value;
                 else if(!empty($matches[0])) continue;
-                else if($key == 'bookClassification') $classificationData = $value;
+                else if($key == 'bookClassification') $classificationData['classification'] = $value;
                 else $updateData[$key] = $value;
+
+                if($key == 'bookType') $classificationData['typeId'] = $value;
             }
 
             DB::table('bookData')->where('id', $id)->update($updateData);

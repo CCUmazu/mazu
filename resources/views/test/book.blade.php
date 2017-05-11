@@ -107,7 +107,7 @@
         $('#submitBtn').click(function() {
             var insertData = {
                 _token: $("meta[name='csrf-token']").attr("content"),
-                id: 14,
+                id: 17,
                 bookType: $('#bookType').val(),
                 bookClassification: $('#bookClassification').val(),
                 author: $('#author').val(),
