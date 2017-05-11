@@ -33,10 +33,22 @@ Route::group(['middleware' => 'web'], function() {
 
     Route::group(['prefix' => 'api'], function() {
         Route::group(['prefix' => 'book'], function() {
-            Route::get('get', 'BookController@get');
+            Route::get('getAll', 'BookController@get');
             Route::post('create', 'BookController@create');
             Route::post('update', 'BookController@update');
             Route::post('delete', 'BookController@delete');
+        });
+
+        Route::group(['prefix' => 'type'], function() {
+            Route::get('getAll', 'TypeController@get');
+        });
+
+        Route::group(['prefix' => 'category'], function() {
+            Route::get('getAll', 'CategoryController@get');
+        });
+
+        Route::group(['prefix' => 'classify'], function() {
+            Route::get('getAll', 'ClassifyController@get');
         });
     });
 

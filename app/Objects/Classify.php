@@ -8,7 +8,8 @@ class Classify
 {
     static function get()
     {
-        return DB::table('bookClassification')->get();
+        $classifyData = DB::table('bookClassification')->get();
+        return ['status' => 0, 'message' => 'get data ok.', 'classifyData' => $classifyData];
     }
 
     static function create($bookId, $classificationData)

@@ -30,7 +30,6 @@ class BookController extends Controller
     {
         if(Auth::check()) {
             $returnValue = Book::create($request);
-
             return $returnValue;
         } else {
             return response()->json(['status' => 1, 'message' => 'not sign in.']);
