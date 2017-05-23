@@ -33,6 +33,7 @@ Route::group(['middleware' => 'web'], function() {
 
     Route::group(['prefix' => 'api'], function() {
         Route::group(['prefix' => 'book'], function() {
+            Route::get('get/{id}', 'BookController@getOne');
             Route::get('getAll', 'BookController@get');
             Route::post('create', 'BookController@create');
             Route::post('update', 'BookController@update');
@@ -50,12 +51,18 @@ Route::group(['middleware' => 'web'], function() {
         Route::group(['prefix' => 'classify'], function() {
             Route::get('getAll', 'ClassifyController@get');
         });
+
+        Route::group(['prefix' => 'download'], function() {
+            Route::get('ris/{id}', 'DownloadController@ris');
+        });
     });
 
     // just for test
     Route::group(['prefix' => 'test'], function() {
         Route::get('/', 'testController@test');
         Route::get('signIn', 'testController@signInView');
+        Route::get('writeFile', 'testController@writeFile');
+        Route::get('downloadFile', 'testController@downloadFile');
         // Route::get('register', 'testController@registerView');
     });
 

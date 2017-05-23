@@ -20,6 +20,12 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
+    public function getOne($id)
+    {
+        $bookData = Book::getOne($id);
+        return $bookData;
+    }
+
     public function get()
     {
         $bookData = Book::get();

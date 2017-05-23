@@ -7,6 +7,12 @@ use App\Objects\Classify;
 
 class Book
 {
+    static function getOne($id)
+    {
+        $bookData = DB::table('bookData')->leftJoin('bookType', 'bookType.id', '=', 'bookData.bookType')->where('bookData.id', $id)->get();
+        return ['status' => 0, 'message' => 'get data ok.', 'bookData' => $bookData[0]];
+    }
+
     static function get()
     {
         $bookData = DB::table('bookData')->get();
