@@ -1,5 +1,9 @@
+var type_data = {};
+var category_data = {};
+var classify_data = [];
+var book_data = [];
+
 var paging = {
-  data: [],
   curPage: 1,
   perPage: 10,
   totalPage: 0,
@@ -8,16 +12,31 @@ var paging = {
     var text = '';
     var i;
     var j;
+    var book;
+    var category;
+    var type;
+    var index;
 
-    for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
+    for(i=(this.curPage-1)*this.perPage, j=0; i<classify_data.length && j<this.perPage; i++, j++) {
+      index = classify_data[i].index;
+      book = book_data[index];
+      category = category_data[classify_data[i].categoryId];
+      type = type_data[classify_data[i].typeId];
+      console.log(book);
+
       text += `<div class="row result-item">`;
-      text += `<div class="col s9 result-item-content" data-dindex="${i}">`;
-      text += `<div class="row title"><b>${this.data[i].title}</b></div>`;
-      text += `<div class="row author">${this.data[i].author}</div>`;
+      text += `<div class="col s9 result-item-content" data-bookindex="${index}" data-category="${classify_data[i].categoryId}">`;
+      text += `<div class="row">${category} - ${type}</div>`;
+      text += `<div class="row">`;
+      text += `${book.author}。${book.publicationDate}。`;
+      text += `〈${book.title}〉。《${book.bookName}》`;
+      text += `。${book.publishingLocation}: ${book.publisher}`;
+      text += `</div>`;
+      text += `<div class="row"></div>`;
       text += `</div>`;// end s9
       text += `<div class="col s3">`;
       text += `<div class="row button-wrapper center">`;
-      text += `<button class="btn btn-default red item-delete-btn" data-dindex="${i}">刪除</button>`;
+      text += `<button class="btn btn-default red item-delete-btn" data-bookid="${book.id}">刪除</button>`;
       text += `</div>`;// end button-wrapper
       text += `</div>`;// end s3
       text += `</div>`;// end result-item
@@ -27,34 +46,12 @@ var paging = {
     form.formEvent();
   },
 
-  drawTable: function() {
-    var text = '';
-    var i;
-    var j;
-
-
-    for(i=(this.curPage-1)*this.perPage, j=0; i<this.data.length && j<this.perPage; i++, j++) {
-      text += `<tr>`;
-      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].author}</td>`;
-      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].publicationDate}</td>`;
-      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].title}</td>`;
-      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].bookName}</td>`;
-      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].editor}</td>`;
-      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].publishingLocation}</td>`;
-      text += `<td class="view-detail" data-target="edit" data-dindex="${i}">${this.data[i].publisher}</td>`;
-      text += `<td><button class="btn btn-default red">刪除</button></td>`;
-      text += `</tr>`;
-    }
-
-    $('tbody').html(text);
-  },
-
   drawPage: function() {
     var text = '';
     var i;
     var j;
 
-    var totalPage = Math.floor(this.data.length / this.perPage) + 1;
+    var totalPage = Math.floor(classify_data.length / this.perPage) + 1;
     var leftPage = Math.max(1, this.curPage - 5);
     var rightPage = Math.min(leftPage + 9, totalPage);
 
@@ -80,15 +77,6 @@ var paging = {
       outside.drawContent();
       outside.drawPage();
     });
-
-    /*
-    $('tbody tr .view-detail').unbind('click');
-    $('tbody tr .view-detail').click(function() {
-      var dindex = $(this).data('dindex');
-      var data = outside.data[dindex];
-
-    });
-    */
   }
 };
 
@@ -115,7 +103,8 @@ var form = {
 
   get: function() {
     var rtl = {
-      bookType: (Math.floor(Math.random()*10) % 4) + 1,
+      bookType: $('#bookType')[0].value,
+      bookClassification: $('#category')[0].value,
       author: $('#author').val(),
       publicationDate: $('#publicationDate').val(),
       title: $('#title').val(),
@@ -135,9 +124,11 @@ var form = {
     return rtl;
   },
 
-  fill: function(data) {
+  fill: function(data, category) {
     this.empty();
 
+    $('#category')[0].value = category;
+    $('#bookType')[0].value = data['bookType'];
     $('#author').val(data['author']);
     $('#publicationDate').val(data['publicationDate']);
     $('#title').val(data['title']);
@@ -165,11 +156,11 @@ var form = {
       var request = outside.get();
 
       console.log(request);
-      return;
-      $.post('/api/book/create', request, function(response) {
+      $.post(`${web_root}/api/book/create`, request, function(response) {
         console.log(response);
+        Materialize.toast('新增成功, 重整頁面之後資料才會顯示', 2000);
       }).fail(function() {
-        console.log('server error');
+        Materialize.toast('新增失敗', 2000);
       });
     });
 
@@ -187,91 +178,86 @@ var form = {
       $('#edit-modal .create').css('display', 'none');
       $('#edit-modal .edit').css('display', 'block');
 
-      var dindex = $(this).data('dindex');
-      console.log(paging.data[dindex], dindex);
-      outside.fill(paging.data[dindex]);
+      var bookIndex = $(this).data('bookindex');
+      var category = $(this).data('category');
+
+      outside.fill(book_data[bookIndex], category);
 
       $('#edit-modal').modal('open');
     });
   }
 };
 
-function getData() {
-  var request = {};
-  $.get('/api/book/get', request, function(response) {
-    console.log(response);
-  });
-}
+async function getData() {
+  var config = {method: 'GET'};
+  var book_res = await fetch(`${web_root}/api/book/getAll`, config);
+  var type_res = await fetch(`${web_root}/api/type/getAll`, config);
+  var category_res = await fetch(`${web_root}/api/category/getAll`, config);
+  var classify_res = await fetch(`${web_root}/api/classify/getAll`, config);
 
-function genData(ending) {
-  var i;
-  var data = [];
-  var category = [
-    '章節',
-    '通論',
-    '信仰與經典',
-    '媽祖文化與比較研究',
-    '歷史、事蹟與傳說',
-    '儀式與祭典',
-    '進香',
-    '祭祀活動與組織',
-    '媽祖廟糾紛與爭論',
-    '兩岸交流',
-    '媽祖信仰與政治',
-    '媽祖信仰的傳播',
-    '觀光與文化政策',
-    '信仰與社區組織',
-    '區域媽祖廟研究',
-    '單一媽祖廟研究(含廟誌)',
-    '建築、藝術',
-    '社會經濟',
-    '其他'
-  ];
+  if(book_res.ok && type_res.ok && category_res.ok && classify_res.ok) {
+    await book_res.json().then((data) => {
+      book_data = data.bookData;
+    });
 
-  var type = [
-    '專書',
-    '專書論文',
-    '期刊論',
-    '碩博士論文'
-  ];
+    await type_res.json().then((data) => {
+      for(var i=0; i<data.typeData.length; i++) {
+        type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
+      }
+    });
 
-  faker.locale = 'zh_TW';
-  for(i=0; i<ending; i++) {
-    data.push({
-      category: category[Math.floor(Math.random()*100) % 18],
-      bookType: type[Math.floor(Math.random()*10) % 4],
-      author: faker.name.firstName() + faker.name.lastName(),
-      publicationDate: faker.date.past(),
-      title: faker.lorem.sentence(),
-      bookName: faker.lorem.word(),
-      editor: faker.name.firstName() + faker.name.lastName(),
-      publishingLocation: faker.address.city(),
-      publisher: faker.company.companyName(),
-      period: Math.floor(Math.random()*100) % 58 + 14,
-      chapter: Math.floor(Math.random()*100) % 30 + 1,
-      page: Math.floor(Math.random()*100) % 58 + 1,
-      department: faker.commerce.department(),
-      thesis: faker.lorem.word(),
-      ISBN: faker.phone.phoneNumberFormat(),
-      ISSN: faker.phone.phoneNumberFormat()
+    await category_res.json().then((data) => {
+      for(var i=0; i<data.categoryData.length; i++) {
+        category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
+      }
+    });
+
+    await classify_res.json().then((data) => {
+      classify_data = data.classifyData;
+      for(var i=0; i<data.classifyData.length; i++) {
+        classify_data[i]['index'] = i;
+      }
     });
   }
-
-  console.log(data);
-  return data;
 }
 
+function drawSelect() {
+  var text = '';
 
-(function() {
+  for(var item in type_data) {
+    text += `<option value="${item}">${type_data[item]}</option>`
+  }
+  $('#bookType').html(text);
+
+  text = '';
+  for(var item in category_data) {
+    text += `<option value="${item}">${category_data[item]}</option>`
+  }
+  $('#category').html(text);
+}
+
+async function init() {
+  await getData();
+  drawSelect();
+  
+  console.log(classify_data);
+  classify_data.sort(cmp);
+  console.log(classify_data);
+
+  paging.drawContent();
+  paging.drawPage();
+
   $('select').material_select();
   $('#edit-modal').modal({
     startingTop: '0%',
     endingTop: '0%'
   });
+}
 
-  paging.data = genData(137);
-  paging.drawContent();
-  paging.drawPage();
+function cmp(a, b) {
+  return (a['categoryId'] - b['categoryId']) || (a['typeId'] - b['typeId']) || (a['bookId'] - b['bookId']);
+}
 
-  getData();
+(function() {
+  init();
 })();
