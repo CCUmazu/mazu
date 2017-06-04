@@ -142,8 +142,8 @@ var form = {
     $('#department').val(data['department']);
     $('#thesis').val(data['thesis']);
     $('#ISBN').val(data['ISBN']);
-    $('#ISSN').val(data['ISSN']); 
-
+    $('#ISSN').val(data['ISSN']);
+    
     Materialize.updateTextFields();
     $('select').material_select();
   },
