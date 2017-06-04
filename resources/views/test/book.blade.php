@@ -107,7 +107,7 @@
         $('#submitBtn').click(function() {
             var insertData = {
                 _token: $("meta[name='csrf-token']").attr("content"),
-                id: 17,
+                //id: 17,
                 bookType: $('#bookType').val(),
                 bookClassification: $('#bookClassification').val(),
                 author: $('#author').val(),
@@ -127,7 +127,7 @@
             };
 
             $.ajax({
-                url: '/api/book/update',
+                url: '/api/book/create',
                 type: 'POST',
                 data: insertData,
                 error: function (error) {

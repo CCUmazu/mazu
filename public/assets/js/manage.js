@@ -104,7 +104,7 @@ var form = {
   get: function() {
     var rtl = {
       bookType: $('#bookType')[0].value,
-      bookClassification: $('#category')[0].value,
+      bookClassification: $('#category').val(),
       author: $('#author').val(),
       publicationDate: $('#publicationDate').val(),
       title: $('#title').val(),

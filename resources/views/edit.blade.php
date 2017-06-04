@@ -4,7 +4,7 @@
       <div class="col s6">
         <div class="row">
           <div class="input-field col s12">
-            <select id="category"></select>
+            <select id="category" multiple></select>
           </div>
         </div>
         <div class="row">
