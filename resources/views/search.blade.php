@@ -9,6 +9,9 @@
 @stop
 
 @section("content")
+  <input type="hidden" value="{{json_encode($types)}}" id="types">
+  <input type="hidden" value="{{json_encode($categories)}}" id="categories">
+
   @include('detail')
   <div class="container">
     <div class="header-container">

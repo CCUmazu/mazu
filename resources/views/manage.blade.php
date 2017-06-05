@@ -13,6 +13,9 @@
   @if(!Auth::check())
     <h1>還沒登入</h1>
   @else
+    <input type="hidden" value="{{json_encode($types)}}" id="types">
+    <input type="hidden" value="{{json_encode($categories)}}" id="categories">
+
     @include('edit')
 
     <div class="container">

@@ -3,6 +3,77 @@ var category_data = {}
 var classify_data = [];
 var book_data = [];
 
+// the same part as manage.js
+//
+// closure
+// cmp function
+// getData function
+
+(function() {
+  init()
+})();
+
+function cmp(a, b) {
+  return (a['categoryId'] - b['categoryId']) || (a['typeId'] - b['typeId']) || (a['bookId'] - b['bookId']);
+}
+
+async function getData() {
+  // get data from server
+  var config = {method: 'GET'};
+  var book_res = await fetch(`${web_root}/api/book/getAll`, config);
+  var classify_res = await fetch(`${web_root}/api/classify/getAll`, config);
+
+  if(book_res.ok && classify_res.ok) {
+    await book_res.json().then((data) => {
+      book_data = data.bookData;
+    });
+
+    await classify_res.json().then((data) => {
+      classify_data = data.classifyData;
+      for(var i=0; i<data.classifyData.length; i++) {
+        classify_data[i]['index'] = i;
+      }
+    });
+  }
+  
+  // get data from dom
+  var data = {};
+
+  data.typeData = JSON.parse($('#types').val());
+  data.categoryData = JSON.parse($('#categories').val());
+  for(var i=0; i<data.typeData.length; i++) {
+    type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
+  }
+  for(var i=0; i<data.categoryData.length; i++) {
+    category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
+  }
+  console.log(type_data, category_data);
+}
+
+var order = {
+
+};
+
+// ----------------------------
+// different part
+
+async function init() {
+  await getData();
+  
+  console.log(classify_data);
+  classify_data.sort(cmp);
+  console.log(classify_data);
+
+  paging.drawContent();
+  paging.drawPage();
+
+  $('select').material_select();
+  $('#edit-modal').modal({
+    startingTop: '0%',
+    endingTop: '0%'
+  });
+}
+
 var paging = {
   data: [],
   curPage: 1,
@@ -22,7 +93,6 @@ var paging = {
       book = book_data[classify_data[i].index];
       category = category_data[classify_data[i].categoryId];
       type = type_data[classify_data[i].typeId];
-      console.log(book);
 
       text += `<div class="row result-item">`;
       text += `<div class="col s9 result-item-content" data-dindex="${book.id}">`;
@@ -33,7 +103,7 @@ var paging = {
       text += `</div>`;// end s9
       text += `<div class="col s3">`;
       text += `<div class="row button-wrapper center">`;
-      text += `<button class="btn btn-default export-ris" data-bookid="${book.id}">匯出 RIS</button>`;
+      text += `<a href="${web_root}/api/download/ris/${book.id}"><button class="btn btn-default">匯出 RIS</button></a>`;
       text += `</div>`;// end button-wrapper
       text += `</div>`;// end s3
       text += `</div>`;// end result-item
@@ -68,13 +138,6 @@ var paging = {
 
   pagingEvent: function() {
     var outside = this;
-    $('.export-ris').unbind('click');
-    $('.export-ris').click(function() {
-      var bookId = $(this).data('bookid');
-      $.fileDownload(`${web_root}/api/download/ris/${bookId}`, function(res) {
-        console.log(res);
-      });
-    });
 
     $('.pagination li').unbind('click');
     $('.pagination li').click(function() {
@@ -107,66 +170,3 @@ var paging = {
   }
 };
 
-async function getData() {
-  var config = {method: 'GET'};
-  var book_res = await fetch(`${web_root}/api/book/getAll`, config);
-  var type_res = await fetch(`${web_root}/api/type/getAll`, config);
-  var category_res = await fetch(`${web_root}/api/category/getAll`, config);
-  var classify_res = await fetch(`${web_root}/api/classify/getAll`, config);
-
-  if(book_res.ok && type_res.ok && category_res.ok && classify_res.ok) {
-    await book_res.json().then((data) => {
-      book_data = data.bookData;
-    });
-
-    await type_res.json().then((data) => {
-      for(var i=0; i<data.typeData.length; i++) {
-        type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
-      }
-    });
-
-    await category_res.json().then((data) => {
-      for(var i=0; i<data.categoryData.length; i++) {
-        category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
-      }
-    });
-
-    await classify_res.json().then((data) => {
-      classify_data = data.classifyData;
-      for(var i=0; i<data.classifyData.length; i++) {
-        classify_data[i]['index'] = i;
-      }
-    });
-  }
-}
-
-async function init() {
-  await getData();
-  
-  console.log(classify_data);
-  classify_data.sort(cmp);
-  console.log(classify_data);
-
-  paging.drawContent();
-  paging.drawPage();
-
-  $('select').material_select();
-  $('#edit-modal').modal({
-    startingTop: '0%',
-    endingTop: '0%'
-  });
-}
-
-function cmp(a, b) {
-  return (a['categoryId'] - b['categoryId']) || (a['typeId'] - b['typeId']) || (a['bookId'] - b['bookId']);
-}
-
-(function() {
-  init()
-
-  /*
-    for(var item in page) {
-      console.log(page[item]);
-    }
-    */
-})();

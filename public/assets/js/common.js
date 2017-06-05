@@ -1,4 +1,4 @@
-var web_root = ''
+var web_root = '';
 
 $(function() {
     var csrf_token = $('meta[name="csrf-token"]').attr('content');

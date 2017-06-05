@@ -3,6 +3,86 @@ var category_data = {};
 var classify_data = [];
 var book_data = [];
 
+// the same part as search.js
+//
+// closure
+// cmp function
+// getData function
+
+(function() {
+  init()
+})();
+
+function cmp(a, b) {
+  return (a['categoryId'] - b['categoryId']) || (a['typeId'] - b['typeId']) || (a['bookId'] - b['bookId']);
+}
+
+async function getData() {
+  // get data from server
+  var config = {method: 'GET'};
+  var book_res = await fetch(`${web_root}/api/book/getAll`, config);
+  var classify_res = await fetch(`${web_root}/api/classify/getAll`, config);
+
+  if(book_res.ok && classify_res.ok) {
+    await book_res.json().then((data) => {
+      book_data = data.bookData;
+    });
+
+    await classify_res.json().then((data) => {
+      classify_data = data.classifyData;
+      for(var i=0; i<data.classifyData.length; i++) {
+        classify_data[i]['index'] = i;
+      }
+    });
+  }
+  
+  // get data from dom
+  var data = {};
+
+  data.typeData = JSON.parse($('#types').val());
+  data.categoryData = JSON.parse($('#categories').val());
+  for(var i=0; i<data.typeData.length; i++) {
+    type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
+  }
+  for(var i=0; i<data.categoryData.length; i++) {
+    category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
+  }
+  //console.log(type_data, category_data);
+}
+
+var concat = {
+  category: function(type) {
+    if(type == 1) {
+    
+    } else if(type == 2) {
+    
+    } else if(type == 3) {
+    
+    } else if(type == 4) {
+    
+    }
+  },
+
+  isEmpty: function() {
+  
+  },
+
+  language: function() {
+  
+  },
+
+  ChineseSpell: function() {
+  
+  },
+
+  EnglishSpell: function() {
+  
+  },
+};
+
+// ----------------------------
+// different part
+
 var paging = {
   curPage: 1,
   perPage: 10,
@@ -22,10 +102,9 @@ var paging = {
       book = book_data[index];
       category = category_data[classify_data[i].categoryId];
       type = type_data[classify_data[i].typeId];
-      console.log(book);
 
       text += `<div class="row result-item">`;
-      text += `<div class="col s9 result-item-content" data-bookindex="${index}" data-category="${classify_data[i].categoryId}">`;
+      text += `<div class="col s9">`;
       text += `<div class="row">${category} - ${type}</div>`;
       text += `<div class="row">`;
       text += `${book.author}。${book.publicationDate}。`;
@@ -36,6 +115,7 @@ var paging = {
       text += `</div>`;// end s9
       text += `<div class="col s3">`;
       text += `<div class="row button-wrapper center">`;
+      text += `<button class="btn btn-default lime result-item-content">編輯</button>`;
       text += `<button class="btn btn-default red item-delete-btn" data-bookid="${book.id}">刪除</button>`;
       text += `</div>`;// end button-wrapper
       text += `</div>`;// end s3
@@ -188,61 +268,10 @@ var form = {
   }
 };
 
-async function getData() {
-  var config = {method: 'GET'};
-  var book_res = await fetch(`${web_root}/api/book/getAll`, config);
-  var type_res = await fetch(`${web_root}/api/type/getAll`, config);
-  var category_res = await fetch(`${web_root}/api/category/getAll`, config);
-  var classify_res = await fetch(`${web_root}/api/classify/getAll`, config);
-
-  if(book_res.ok && type_res.ok && category_res.ok && classify_res.ok) {
-    await book_res.json().then((data) => {
-      book_data = data.bookData;
-    });
-
-    await type_res.json().then((data) => {
-      for(var i=0; i<data.typeData.length; i++) {
-        type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
-      }
-    });
-
-    await category_res.json().then((data) => {
-      for(var i=0; i<data.categoryData.length; i++) {
-        category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
-      }
-    });
-
-    await classify_res.json().then((data) => {
-      classify_data = data.classifyData;
-      for(var i=0; i<data.classifyData.length; i++) {
-        classify_data[i]['index'] = i;
-      }
-    });
-  }
-}
-
-function drawSelect() {
-  var text = '';
-
-  for(var item in type_data) {
-    text += `<option value="${item}">${type_data[item]}</option>`
-  }
-  $('#bookType').html(text);
-
-  text = '';
-  for(var item in category_data) {
-    text += `<option value="${item}">${category_data[item]}</option>`
-  }
-  $('#category').html(text);
-}
-
 async function init() {
   await getData();
-  drawSelect();
-  
-  console.log(classify_data);
+
   classify_data.sort(cmp);
-  console.log(classify_data);
 
   paging.drawContent();
   paging.drawPage();
@@ -254,10 +283,3 @@ async function init() {
   });
 }
 
-function cmp(a, b) {
-  return (a['categoryId'] - b['categoryId']) || (a['typeId'] - b['typeId']) || (a['bookId'] - b['bookId']);
-}
-
-(function() {
-  init();
-})();
