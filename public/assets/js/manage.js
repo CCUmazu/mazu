@@ -184,7 +184,7 @@ var form = {
   get: function() {
     var rtl = {
       bookType: $('#bookType')[0].value,
-      bookClassification: $('#category')[0].value,
+      bookClassification: $('#category').val(),
       author: $('#author').val(),
       publicationDate: $('#publicationDate').val(),
       title: $('#title').val(),
@@ -222,8 +222,8 @@ var form = {
     $('#department').val(data['department']);
     $('#thesis').val(data['thesis']);
     $('#ISBN').val(data['ISBN']);
-    $('#ISSN').val(data['ISSN']); 
-
+    $('#ISSN').val(data['ISSN']);
+    
     Materialize.updateTextFields();
     $('select').material_select();
   },
