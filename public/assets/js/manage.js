@@ -1,7 +1,8 @@
 var type_data = {};
 var category_data = {};
-var classify_data = [];
 var book_data = [];
+var without_filter_book_data = [];
+var classify_data = {};
 
 // the same part as search.js
 //
@@ -14,25 +15,17 @@ var book_data = [];
 })();
 
 function cmp(a, b) {
-  return (a['categoryId'] - b['categoryId']) || (a['typeId'] - b['typeId']) || (a['bookId'] - b['bookId']);
+  return (a['categoryId'][0] - b['categoryId'][0]) || (a['typeId'] - b['typeId']) || (a['id'] - b['id']);
 }
 
 async function getData() {
   // get data from server
   var config = {method: 'GET'};
   var book_res = await fetch(`${web_root}/api/book/getAll`, config);
-  var classify_res = await fetch(`${web_root}/api/classify/getAll`, config);
 
-  if(book_res.ok && classify_res.ok) {
+  if(book_res.ok) {
     await book_res.json().then((data) => {
       book_data = data.bookData;
-    });
-
-    await classify_res.json().then((data) => {
-      classify_data = data.classifyData;
-      for(var i=0; i<data.classifyData.length; i++) {
-        classify_data[i]['index'] = i;
-      }
     });
   }
   
@@ -41,17 +34,41 @@ async function getData() {
 
   data.typeData = JSON.parse($('#types').val());
   data.categoryData = JSON.parse($('#categories').val());
+  data.classifyData = JSON.parse($('#classify').val());
   for(var i=0; i<data.typeData.length; i++) {
     type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
   }
   for(var i=0; i<data.categoryData.length; i++) {
     category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
   }
-  //console.log(type_data, category_data);
+  for(var i=0; i<data.classifyData.length; i++) {
+    bookId = data.classifyData[i].bookId;
+    categoryId = data.classifyData[i].categoryId;
+    typeId = data.classifyData[i].typeId;
+    
+    if(!(bookId in classify_data)) {
+      classify_data[bookId] = {};
+      classify_data[bookId]['categoryId'] = [categoryId];
+      classify_data[bookId]['typeId'] = typeId;
+    } else {
+      classify_data[bookId]['categoryId'].push(categoryId);
+    }
+  }
+ 
+  // connection book and classify
+  for(var i=0; i<book_data.length; i++) {
+    bookId = book_data[i].id;
+    book_data[i]['categoryId'] = classify_data[bookId]['categoryId'];
+    book_data[i]['typeId'] = classify_data[bookId]['typeId']
+    
+    // copy to maintain raw data
+    without_filter_book_data.push(book_data[i]);
+  }
+  book_data.sort(cmp);
 }
 
 var concat = {
-  category: function(type) {
+  entry: function(type) {
     if(type == 1) {
     
     } else if(type == 2) {
@@ -78,6 +95,19 @@ var concat = {
   EnglishSpell: function() {
   
   },
+
+  categoryStr: function(categories) {
+    var text = '';
+    for(var i=0; i<categories.length; i++) {
+      if(i+1 != categories.length) {// if not end, need a comma
+        text += `${category_data[categories[i]]}, `
+      } else {
+        text += `${category_data[categories[i]]}`
+      }
+    }
+
+    return text;
+  }
 };
 
 // ----------------------------
@@ -97,15 +127,16 @@ var paging = {
     var type;
     var index;
 
-    for(i=(this.curPage-1)*this.perPage, j=0; i<classify_data.length && j<this.perPage; i++, j++) {
-      index = classify_data[i].index;
-      book = book_data[index];
-      category = category_data[classify_data[i].categoryId];
-      type = type_data[classify_data[i].typeId];
-
+    for(i=(this.curPage-1)*this.perPage, j=0; i<book_data.length && j<this.perPage; i++, j++) {
+      
+      book = book_data[i];
+      category = concat.categoryStr(book['categoryId']);
+      type = type_data[book.typeId];
+      
       text += `<div class="row result-item">`;
       text += `<div class="col s9">`;
-      text += `<div class="row">${category} - ${type}</div>`;
+      text += `<div class="row">${category}</div>`;
+      text += `<div class="row">${type}</div>`;
       text += `<div class="row">`;
       text += `${book.author}。${book.publicationDate}。`;
       text += `〈${book.title}〉。《${book.bookName}》`;
@@ -115,7 +146,7 @@ var paging = {
       text += `</div>`;// end s9
       text += `<div class="col s3">`;
       text += `<div class="row button-wrapper center">`;
-      text += `<button class="btn btn-default lime result-item-content">編輯</button>`;
+      text += `<button class="btn btn-default lime result-item-content" data-bookindex="${i}">編輯</button>`;
       text += `<button class="btn btn-default red item-delete-btn" data-bookid="${book.id}">刪除</button>`;
       text += `</div>`;// end button-wrapper
       text += `</div>`;// end s3
@@ -131,7 +162,7 @@ var paging = {
     var i;
     var j;
 
-    var totalPage = Math.floor(classify_data.length / this.perPage) + 1;
+    var totalPage = Math.floor(book_data.length / this.perPage) + 1;
     var leftPage = Math.max(1, this.curPage - 5);
     var rightPage = Math.min(leftPage + 9, totalPage);
 
@@ -183,8 +214,8 @@ var form = {
 
   get: function() {
     var rtl = {
-      bookType: $('#bookType')[0].value,
-      bookClassification: $('#category').val(),
+      bookType: $('#bookType').val(),
+      bookClassification: $('#bookClassification').val(),
       author: $('#author').val(),
       publicationDate: $('#publicationDate').val(),
       title: $('#title').val(),
@@ -204,11 +235,11 @@ var form = {
     return rtl;
   },
 
-  fill: function(data, category) {
+  fill: function(data) {
     this.empty();
 
-    $('#category')[0].value = category;
-    $('#bookType')[0].value = data['bookType'];
+    $('#bookClassification').val(data['categoryId']);
+    $('#bookType').val(data['bookType']);
     $('#author').val(data['author']);
     $('#publicationDate').val(data['publicationDate']);
     $('#title').val(data['title']);
@@ -244,12 +275,32 @@ var form = {
       });
     });
 
+    $('#editBtn').unbind('click');
+    $('#editBtn').click(function() {
+      var request = outside.get();
+      var id = $(this).data('id');
+      request.id = id;
+
+      console.log(request);
+      $.post(`${web_root}/api/book/update`, request, function(response) {
+        console.log(response);
+        Materialize.toast('更新成功, 重整頁面之後資料才會顯示', 2000);
+      }).fail(function() {
+        Materialize.toast('更新失敗', 2000);
+      });   
+    });
+
+    $('.deleteBtn').unbind('click');
+    $('.deleteBtn').click(function() {
+    
+    });
+
     $('#open-edit-modal').unbind('click');
     $('#open-edit-modal').click(function() {
       $('#edit-modal .create').css('display', 'block');
       $('#edit-modal .edit').css('display', 'none');
       outside.empty();
-
+      
       $('#edit-modal').modal('open');
     });
 
@@ -259,10 +310,9 @@ var form = {
       $('#edit-modal .edit').css('display', 'block');
 
       var bookIndex = $(this).data('bookindex');
-      var category = $(this).data('category');
-
-      outside.fill(book_data[bookIndex], category);
-
+      outside.fill(book_data[bookIndex]);
+      
+      $('#editBtn').data('id', book_data[bookIndex]['id']);
       $('#edit-modal').modal('open');
     });
   }
@@ -270,8 +320,6 @@ var form = {
 
 async function init() {
   await getData();
-
-  classify_data.sort(cmp);
 
   paging.drawContent();
   paging.drawPage();

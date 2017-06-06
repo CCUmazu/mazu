@@ -4,18 +4,20 @@
       <div class="col s6">
         <div class="row">
           <div class="input-field col s12">
-            <select id="bookClassification">
-              @foreach($categories as $category)
-                <option value="{{$category->id}}">{{$category->name}}</option>
+            <select id="bookType">
+              <option disabled>書籍類別</option>
+              @foreach($types as $type)
+                <option value="{{$type->id}}">{{$type->type}}</option>
               @endforeach
             </select>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <select id="bookType">
-              @foreach($types as $type)
-                <option value="{{$type->id}}">{{$type->type}}</option>
+            <select id="bookClassification" multiple>
+              <option disabled>書籍章節</option>
+              @foreach($categories as $category)
+                <option value="{{$category->id}}">{{$category->name}}</option>
               @endforeach
             </select>
           </div>
@@ -116,10 +118,10 @@
           新增<i class="material-icons right">send</i>
         </button>
       </div>
-      <div class="col s12 edit">
+      <div class="col s12 edit"><!--
         <button id="deleteBtn" class="btn red">
           刪除<i class="material-icons right">send</i>
-        </button>
+        </button>-->
         <button id="editBtn" class="btn lime">
           更新<i class="material-icons right">send</i>
         </button>
