@@ -75,8 +75,8 @@ class Book
     static function delete($id)
     {
         if(Auth::check()) {
-            DB::table('bookData')->where('id', $id)->delete();
             Classify::delete($id);
+            DB::table('bookData')->where('id', $id)->delete();
             return ['status' => 0, 'message' => 'delete data ok.'];
         } else {
             return ['status' => 1, 'message' => 'not sign in.'];

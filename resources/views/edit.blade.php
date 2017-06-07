@@ -3,7 +3,8 @@
     <div class="form-wrapper row">
       <div class="col s6">
         <div class="row">
-          <div class="input-field col s12">
+          <div class="col s1">*</div>
+          <div class="input-field col s11">
             <select id="bookType">
               <option disabled>書籍類別</option>
               @foreach($types as $type)
@@ -13,7 +14,8 @@
           </div>
         </div>
         <div class="row">
-          <div class="input-field col s12">
+          <div class="col s1">*</div>
+          <div class="input-field col s11">
             <select id="bookClassification" multiple>
               <option disabled>書籍章節</option>
               @foreach($categories as $category)
@@ -36,14 +38,14 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <input id="editor" type="text" class="validate">
-            <label for="editor">編者</label>
+            <input id="publicationDate" type="text" class="validate">
+            <label for="publicationDate">年份</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <input id="publicationDate" type="text" class="validate">
-            <label for="publicationDate">年份</label>
+            <input id="editor" type="text" class="validate">
+            <label for="editor">編者</label>
           </div>
         </div>
         <div class="row">
@@ -68,14 +70,14 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <input id="period" type="text" class="validate">
-            <label for="period">期</label>
+            <input id="chapter" type="text" class="validate">
+            <label for="chapter">卷</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <input id="chapter" type="text" class="validate">
-            <label for="chapter">卷</label>
+            <input id="period" type="text" class="validate">
+            <label for="period">期</label>
           </div>
         </div>
         <div class="row">

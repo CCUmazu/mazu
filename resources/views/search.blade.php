@@ -29,14 +29,20 @@
             </div>
           </div>
           <div class="row">
-            <div class="col s8 offset-s2">
+            <div class="col s2 offset-s2">
+              <p>
+              <input type="checkbox" id="search-all">
+              <label for="search-all">全部章節</label>
+              </p>
+            </div>
+            <div class="col s6 without-search-all">
               <div class="input-field">
-                <select id="search-type">
-                  <option value="9999" selected>全部類別</option>
-                  <option value="1">書名</option>
-                  <option value="2">作者</option>
+                <select id="search-category" multiple>
+                  @foreach($categories as $category)
+                    <option value="{{$category->id}}">{{$category->name}}</option>
+                  @endforeach
                 </select>
-                <label>類別</label>
+                <label>章節</label>
               </div>
             </div>
           </div>
@@ -67,7 +73,7 @@
       -->
     </div>
     <div id="page-number-container"></div>
-  
+
     @include('footer')
   </div>
 @stop

@@ -27,11 +27,10 @@ body {
 #header-image {
   width: 90%;
   height: 360px;
-  background-image: url("mazu.png");
+  background-image: url("header.png");
   background-repeat: no-repeat;
   background-position: right;
-  /*background-attachment: fixed;*/
-  background-attachment: 100% 100%;
+  background-attachment: fixed;
   background-size: cover;
   position: absolute;
   left: 5%;

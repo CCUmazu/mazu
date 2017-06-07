@@ -1,7 +1,8 @@
-var type_data = {}
-var category_data = {}
-var classify_data = [];
+var type_data = {};
+var category_data = {};
 var book_data = [];
+var without_filter_book_data = [];
+var classify_data = {};
 
 // the same part as manage.js
 //
@@ -14,25 +15,17 @@ var book_data = [];
 })();
 
 function cmp(a, b) {
-  return (a['categoryId'] - b['categoryId']) || (a['typeId'] - b['typeId']) || (a['bookId'] - b['bookId']);
+  return (a['categoryId'][0] - b['categoryId'][0]) || (a['typeId'] - b['typeId']) || (a['id'] - b['id']);
 }
 
 async function getData() {
   // get data from server
   var config = {method: 'GET'};
   var book_res = await fetch(`${web_root}/api/book/getAll`, config);
-  var classify_res = await fetch(`${web_root}/api/classify/getAll`, config);
 
-  if(book_res.ok && classify_res.ok) {
+  if(book_res.ok) {
     await book_res.json().then((data) => {
       book_data = data.bookData;
-    });
-
-    await classify_res.json().then((data) => {
-      classify_data = data.classifyData;
-      for(var i=0; i<data.classifyData.length; i++) {
-        classify_data[i]['index'] = i;
-      }
     });
   }
   
@@ -41,39 +34,234 @@ async function getData() {
 
   data.typeData = JSON.parse($('#types').val());
   data.categoryData = JSON.parse($('#categories').val());
+  data.classifyData = JSON.parse($('#classify').val());
   for(var i=0; i<data.typeData.length; i++) {
     type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
   }
   for(var i=0; i<data.categoryData.length; i++) {
     category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
   }
-  console.log(type_data, category_data);
+  for(var i=0; i<data.classifyData.length; i++) {
+    bookId = data.classifyData[i].bookId;
+    categoryId = data.classifyData[i].categoryId;
+    typeId = data.classifyData[i].typeId;
+    
+    if(!(bookId in classify_data)) {
+      classify_data[bookId] = {};
+      classify_data[bookId]['categoryId'] = [categoryId];
+      classify_data[bookId]['typeId'] = typeId;
+    } else {
+      classify_data[bookId]['categoryId'].push(categoryId);
+    }
+  }
+ 
+  // connection book and classify
+  for(var i=0; i<book_data.length; i++) {
+    bookId = book_data[i].id;
+    book_data[i]['categoryId'] = classify_data[bookId]['categoryId'];
+    book_data[i]['typeId'] = classify_data[bookId]['typeId']
+    
+    // copy to maintain raw data
+    without_filter_book_data.push(book_data[i]);
+  }
+  book_data.sort(cmp);
 }
 
-var order = {
+var filter = {
+  category: function() {
+    var all_or_not = $('#search-all').prop('checked');
+    var categories = $('#search-category').val();
+    var book;
+    var exist;
+       
+    if(all_or_not) {// copy all, because select all category
+      for(var i=0; i<without_filter_book_data.length; i++) {
+        book_data.push(without_filter_book_data[i]);
+      }
+    } else {
+      for(var i=0; i<without_filter_book_data.length; i++) {
+        book = without_filter_book_data[i];
+        exist = false;
+        for(var j=0; j<book.categoryId.length; j++) {
+          for(var k=0; k<categories.length; k++) {
+            if(categories[k] == book.categoryId[j]) {
+              exist = true;
+              break;
+            }
+          }
+        }
 
+        if(exist) {
+          book_data.push(book);
+        }
+      }
+    }
+  },
+
+  keyword: function() {
+    var keyword = $('#search-word').val();
+  },
+
+  init: function() {
+    var outside = this;
+
+    $('#search-all').unbind('change');
+    $('#search-all').change(function() {
+      var all_or_not = $('#search-all').prop('checked');
+
+      if(all_or_not) {
+        $('.without-search-all').css('display', 'none');
+      } else {
+        $('.without-search-all').css('display', 'block');
+      }
+    });
+
+    $('#search-btn').unbind('click');
+    $('#search-btn').click(function() {
+      // reset
+      book_data = [];
+      
+      // filter
+      outside.category();
+      outside.keyword();
+
+      // draw
+      paging.drawContent();
+      paging.drawPage();
+    });
+  }
+};
+
+var concat = {
+  isEmpty: function(str) {
+    return (str=='') ? true : false;
+  },
+  
+  addChars: function(str, chars) {
+    var special='〈〉。《》';
+    var text = '';
+
+    switch(chars) {
+      case 0:// Chinese Mode
+        if(!this.isEmpty(str)) {
+          text += `${str}。`;
+        }
+        break;
+      case 1:
+        if(!this.isEmpty(str)) {
+          text += `〈${str}〉。`;
+        }
+        break;
+      case 2:
+        if(!this.isEmpty(str)) {
+          text += `《${str}》。`
+        }
+        break;
+      case 3:
+        if(!this.isEmpty(str)) {
+          text += `${str}：`
+        }
+        break;
+      case 4:
+        if((!this.isEmpty(str.chapter)) && (!this.isEmpty(str.period))) {
+          text += `${str.chapter}(${str.period}):`;
+        } else if(!this.isEmpty(str.chapter)) {
+          text += `${str.chapter}:`;
+        }
+        break;
+      case 11:// English Mode
+        if(!this.isEmpty(str)) {
+          text += `${str}. `;
+        }
+        break;
+      case 12:
+        if(!this.isEmpty(str)) {
+          text += `“${str}” `;
+        }
+        break;
+      case 13:
+        if(!this.isEmpty(str)) {
+          text += `${str}: `;
+        }
+        break;
+      case 14:
+        if(!this.isEmpty(str)) {
+          text += `Edited by ${str}. `;
+        }
+        break;
+    }
+
+    return text;
+  },
+
+  entry: function(book) {
+    // check language
+    rules = /^[A-Za-z,. ]+$/;
+    
+    if(
+      ((String(book.bookName).match(rules)) === null) || 
+      ((String(book.title).match(rules)) === null)
+    ) {// Chinese
+      return this.ChineseMode(book);
+    } else {// English
+      return this.EnglishMode(book);
+    }
+  },
+
+  ChineseMode: function(book) {
+    var text = '';
+    
+    text += this.addChars(book.author, 0);
+    text += this.addChars(book.publicationDate, 0);
+    text += this.addChars(book.title, 1);
+    text += this.addChars(book.bookName, 2);
+    text += this.addChars(book.editor, 0);
+    text += this.addChars(book.publishingLocation, 3);
+    text += this.addChars(book.publisher, 0);
+    text += this.addChars(book.department, 0);
+    text += this.addChars(book.thesis, 0);
+    text += this.addChars(book, 4);
+    text += this.addChars(book.page, 0);
+
+    return text;
+  },
+
+  EnglishMode: function(book) {
+    var text = '';
+    
+    text += this.addChars(book.author, 11);
+    text += this.addChars(book.publicationDate, 11);
+    text += this.addChars(book.title, 12);
+    text += this.addChars(book.bookName, 11);
+    text += this.addChars(book.editor, 14)
+    text += this.addChars(book.publishingLocation, 13);
+    text += this.addChars(book.publisher, 11);
+    text += this.addChars(book, 4);
+    text += this.addChars(book.page, 11);
+
+    if(text[text.length-1] == ' ') {
+      text.slice(0, -1);
+    }
+
+    return text;
+  },
+
+  categoryStr: function(categories) {
+    var text = '';
+    for(var i=0; i<categories.length; i++) {
+      if(i+1 != categories.length) {// if not end, need a comma
+        text += `${category_data[categories[i]]}, `
+      } else {
+        text += `${category_data[categories[i]]}`
+      }
+    }
+
+    return text;
+  }
 };
 
 // ----------------------------
 // different part
-
-async function init() {
-  await getData();
-  
-  console.log(classify_data);
-  classify_data.sort(cmp);
-  console.log(classify_data);
-
-  paging.drawContent();
-  paging.drawPage();
-
-  $('select').material_select();
-  $('#edit-modal').modal({
-    startingTop: '0%',
-    endingTop: '0%'
-  });
-}
-
 var paging = {
   data: [],
   curPage: 1,
@@ -86,20 +274,20 @@ var paging = {
     var j;
     var book;
     var category;
-    var type;
+    var concat_str;
 
 
-    for(i=(this.curPage-1)*this.perPage, j=0; i<classify_data.length && j<this.perPage; i++, j++) {
-      book = book_data[classify_data[i].index];
-      category = category_data[classify_data[i].categoryId];
-      type = type_data[classify_data[i].typeId];
+    for(i=(this.curPage-1)*this.perPage, j=0; i<book_data.length && j<this.perPage; i++, j++) {
+      book = book_data[i];
+      category = concat.categoryStr(book['categoryId']);
+      type = type_data[book.typeId];
+      concat_str = concat.entry(book);
 
       text += `<div class="row result-item">`;
-      text += `<div class="col s9 result-item-content" data-dindex="${book.id}">`;
-      text += `<div class="row">${category} - ${type}</div>`;
-      text += `<div class="row title"><b>${book.title}</b></div>`;
-      text += `<div class="row author">${book.author}</div>`;
-      text += `<div class="row"></div>`;
+      text += `<div class="col s9 result-item-content">`;
+      text += `<div class="row">${category}</div>`;
+      text += `<div class="row">${type}</div>`;
+      text += `<div class="row">${concat_str}</div>`;
       text += `</div>`;// end s9
       text += `<div class="col s3">`;
       text += `<div class="row button-wrapper center">`;
@@ -117,7 +305,7 @@ var paging = {
     var i;
     var j;
 
-    var totalPage = Math.floor(classify_data.length / this.perPage) + 1;
+    var totalPage = Math.floor(book_data.length / this.perPage) + 1;
     var leftPage = Math.max(1, this.curPage - 5);
     var rightPage = Math.min(leftPage + 9, totalPage);
 
@@ -145,28 +333,25 @@ var paging = {
       outside.drawContent();
       outside.drawPage();
     });
-
-    $('tbody tr').unbind('click');
-    $('tbody tr').click(function() {
-      var dindex = $(this).data('dindex');
-      var data = outside.data[dindex];
-
-      $(`#bookType[value="${data.bookType}"]`).prop('checked', true);
-      $('#author').html(data.author);
-      $('#publicationDate').html(data.publicationDate)
-      $('#title').html(data.title);
-      $('#bookName').html(data.bookName);
-      $('#editor').html(data.editor);
-      $('#publishingLocation').html(data.publishingLocation);
-      $('#publisher').html(data.publisher);
-      $('#period').html(data.period);
-      $('#chapter').html(data.chapter);
-      $('#page').html(data.page);
-      $('#department').html(data.department);
-      $('#thesis').html(data.thesis);
-      $('#ISBN').html(data.ISBN);
-      $('#ISSN').html(data.ISSN);
-    });
   }
 };
 
+async function init() {
+  // get data
+  await getData();
+  
+  // init filter
+  filter.init();
+  $('#search-all').prop('checked', true);
+  $('#search-all').change();
+
+  // init list
+  paging.drawContent();
+  paging.drawPage();
+
+  $('select').material_select();
+  $('#edit-modal').modal({
+    startingTop: '0%',
+    endingTop: '0%'
+  });
+}
