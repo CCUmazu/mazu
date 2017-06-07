@@ -1,11 +1,12 @@
 @extends('init')
 
 @section('css')
-  <link rel="stylesheet" href="/assets/css/manage.css">
+  <link rel="stylesheet" href="../assets/css/manage.css">
 @stop
 
 @section('js')
-  <script src="/assets/js/manage.js"></script>
+  <script src="../assets/js/common_for_search_and_manage.js"></script>
+  <script src="../assets/js/manage.js"></script>
 @stop
 
 @section('content')
