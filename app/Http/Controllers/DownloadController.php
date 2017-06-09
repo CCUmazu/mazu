@@ -25,6 +25,13 @@ class DownloadController extends Controller
         $temp = Book::getOne($id);
         $bookData = $temp['bookData'];
         $data  = "TY  -\r\nTI  -\r\nAB  -\r\nC1  -\r\nEP  -\r\nIS  -\r\nSN  -\r\nSP  -\r\nT2  -\r\nUR  -\r\nVL  -\r\nER  -\r\n";
+        switch ($bookData->id)
+        {
+            case 1: $data .= "TY  - BOOK\r\n"; break;
+            case 2: $data .= "TY  - ECHAP\r\n"; break;
+            case 3: $data .= "TY  - JOUR\r\n"; break;
+            case 4: $data .= "TY  - THES\r\n"; break;
+        }
         $data .= "A1  - ".$bookData->author."\r\n";
         $data .= "A2  - ".$bookData->author."\r\n";
         $data .= "C1  - ".$bookData->title."\r\n";

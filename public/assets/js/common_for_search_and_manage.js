@@ -38,7 +38,7 @@ async function getData() {
     bookId = data.classifyData[i].bookId;
     categoryId = data.classifyData[i].categoryId;
     typeId = data.classifyData[i].typeId;
-    
+
     if(!(bookId in classify_data)) {
       classify_data[bookId] = {};
       classify_data[bookId]['categoryId'] = [categoryId];
