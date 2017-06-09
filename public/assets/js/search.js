@@ -1,8 +1,3 @@
-var type_data = {}
-var category_data = {}
-var classify_data = [];
-var book_data = [];
-
 var paging = {
   data: [],
   curPage: 1,
@@ -15,25 +10,24 @@ var paging = {
     var j;
     var book;
     var category;
-    var type;
+    var concat_str;
 
 
-    for(i=(this.curPage-1)*this.perPage, j=0; i<classify_data.length && j<this.perPage; i++, j++) {
-      book = book_data[classify_data[i].index];
-      category = category_data[classify_data[i].categoryId];
-      type = type_data[classify_data[i].typeId];
-      console.log(book);
+    for(i=(this.curPage-1)*this.perPage, j=0; i<book_data.length && j<this.perPage; i++, j++) {
+      book = book_data[i];
+      category = concat.categoryStr(book['categoryId']);
+      type = type_data[book.typeId];
+      concat_str = concat.entry(book);
 
       text += `<div class="row result-item">`;
-      text += `<div class="col s9 result-item-content" data-dindex="${book.id}">`;
-      text += `<div class="row">${category} - ${type}</div>`;
-      text += `<div class="row title"><b>${book.title}</b></div>`;
-      text += `<div class="row author">${book.author}</div>`;
-      text += `<div class="row"></div>`;
+      text += `<div class="col s9 result-item-content">`;
+      text += `<div class="row">${category}</div>`;
+      text += `<div class="row">${type}</div>`;
+      text += `<div class="row">${concat_str}</div>`;
       text += `</div>`;// end s9
       text += `<div class="col s3">`;
       text += `<div class="row button-wrapper center">`;
-      text += `<button class="btn btn-default export-ris" data-bookid="${book.id}">匯出 RIS</button>`;
+      text += `<a href="${web_root}/api/download/ris/${book.id}"><button class="btn btn-default">匯出 RIS</button></a>`;
       text += `</div>`;// end button-wrapper
       text += `</div>`;// end s3
       text += `</div>`;// end result-item
@@ -47,7 +41,7 @@ var paging = {
     var i;
     var j;
 
-    var totalPage = Math.floor(classify_data.length / this.perPage) + 1;
+    var totalPage = Math.floor(book_data.length / this.perPage) + 1;
     var leftPage = Math.max(1, this.curPage - 5);
     var rightPage = Math.min(leftPage + 9, totalPage);
 
@@ -68,13 +62,6 @@ var paging = {
 
   pagingEvent: function() {
     var outside = this;
-    $('.export-ris').unbind('click');
-    $('.export-ris').click(function() {
-      var bookId = $(this).data('bookid');
-      $.fileDownload(`${web_root}/api/download/ris/${bookId}`, function(res) {
-        console.log(res);
-      });
-    });
 
     $('.pagination li').unbind('click');
     $('.pagination li').click(function() {
@@ -82,71 +69,19 @@ var paging = {
       outside.drawContent();
       outside.drawPage();
     });
-
-    $('tbody tr').unbind('click');
-    $('tbody tr').click(function() {
-      var dindex = $(this).data('dindex');
-      var data = outside.data[dindex];
-
-      $(`#bookType[value="${data.bookType}"]`).prop('checked', true);
-      $('#author').html(data.author);
-      $('#publicationDate').html(data.publicationDate)
-      $('#title').html(data.title);
-      $('#bookName').html(data.bookName);
-      $('#editor').html(data.editor);
-      $('#publishingLocation').html(data.publishingLocation);
-      $('#publisher').html(data.publisher);
-      $('#period').html(data.period);
-      $('#chapter').html(data.chapter);
-      $('#page').html(data.page);
-      $('#department').html(data.department);
-      $('#thesis').html(data.thesis);
-      $('#ISBN').html(data.ISBN);
-      $('#ISSN').html(data.ISSN);
-    });
   }
 };
 
-async function getData() {
-  var config = {method: 'GET'};
-  var book_res = await fetch(`${web_root}/api/book/getAll`, config);
-  var type_res = await fetch(`${web_root}/api/type/getAll`, config);
-  var category_res = await fetch(`${web_root}/api/category/getAll`, config);
-  var classify_res = await fetch(`${web_root}/api/classify/getAll`, config);
-
-  if(book_res.ok && type_res.ok && category_res.ok && classify_res.ok) {
-    await book_res.json().then((data) => {
-      book_data = data.bookData;
-    });
-
-    await type_res.json().then((data) => {
-      for(var i=0; i<data.typeData.length; i++) {
-        type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
-      }
-    });
-
-    await category_res.json().then((data) => {
-      for(var i=0; i<data.categoryData.length; i++) {
-        category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
-      }
-    });
-
-    await classify_res.json().then((data) => {
-      classify_data = data.classifyData;
-      for(var i=0; i<data.classifyData.length; i++) {
-        classify_data[i]['index'] = i;
-      }
-    });
-  }
-}
-
 async function init() {
+  // get data
   await getData();
   
-  console.log(classify_data);
-  classify_data.sort(cmp);
-  console.log(classify_data);
+  // init filter
+  filter.init();
+  $('#search-all').prop('checked', true);
+  $('#search-all').change();
 
+  // init list
   paging.drawContent();
   paging.drawPage();
 
@@ -157,16 +92,6 @@ async function init() {
   });
 }
 
-function cmp(a, b) {
-  return (a['categoryId'] - b['categoryId']) || (a['typeId'] - b['typeId']) || (a['bookId'] - b['bookId']);
-}
-
 (function() {
-  init()
-
-  /*
-    for(var item in page) {
-      console.log(page[item]);
-    }
-    */
+  init();
 })();

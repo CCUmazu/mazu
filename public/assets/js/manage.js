@@ -1,8 +1,3 @@
-var type_data = {};
-var category_data = {};
-var classify_data = [];
-var book_data = [];
-
 var paging = {
   curPage: 1,
   perPage: 10,
@@ -14,29 +9,24 @@ var paging = {
     var j;
     var book;
     var category;
-    var type;
-    var index;
+    var concat_str;
 
-    for(i=(this.curPage-1)*this.perPage, j=0; i<classify_data.length && j<this.perPage; i++, j++) {
-      index = classify_data[i].index;
-      book = book_data[index];
-      category = category_data[classify_data[i].categoryId];
-      type = type_data[classify_data[i].typeId];
-      console.log(book);
-
+    for(i=(this.curPage-1)*this.perPage, j=0; i<book_data.length && j<this.perPage; i++, j++) {
+      book = book_data[i];
+      category = concat.categoryStr(book['categoryId']);
+      type = type_data[book.typeId];
+      concat_str = concat.entry(book);
+      
       text += `<div class="row result-item">`;
-      text += `<div class="col s9 result-item-content" data-bookindex="${index}" data-category="${classify_data[i].categoryId}">`;
-      text += `<div class="row">${category} - ${type}</div>`;
-      text += `<div class="row">`;
-      text += `${book.author}。${book.publicationDate}。`;
-      text += `〈${book.title}〉。《${book.bookName}》`;
-      text += `。${book.publishingLocation}: ${book.publisher}`;
-      text += `</div>`;
-      text += `<div class="row"></div>`;
+      text += `<div class="col s9">`;
+      text += `<div class="row">${category}</div>`;
+      text += `<div class="row">${type}</div>`;
+      text += `<div class="row">${concat_str}</div>`;
       text += `</div>`;// end s9
       text += `<div class="col s3">`;
       text += `<div class="row button-wrapper center">`;
-      text += `<button class="btn btn-default red item-delete-btn" data-bookid="${book.id}">刪除</button>`;
+      text += `<button class="btn btn-default lime result-item-content" data-bookindex="${i}">編輯</button>`;
+      text += `<button class="btn btn-default red deleteBtn" data-bookid="${book.id}" data.bookindex="${i}">刪除</button>`;
       text += `</div>`;// end button-wrapper
       text += `</div>`;// end s3
       text += `</div>`;// end result-item
@@ -51,7 +41,7 @@ var paging = {
     var i;
     var j;
 
-    var totalPage = Math.floor(classify_data.length / this.perPage) + 1;
+    var totalPage = Math.floor(book_data.length / this.perPage) + 1;
     var leftPage = Math.max(1, this.curPage - 5);
     var rightPage = Math.min(leftPage + 9, totalPage);
 
@@ -103,8 +93,8 @@ var form = {
 
   get: function() {
     var rtl = {
-      bookType: $('#bookType')[0].value,
-      bookClassification: $('#category').val(),
+      bookType: $('#bookType').val(),
+      bookClassification: $('#bookClassification').val(),
       author: $('#author').val(),
       publicationDate: $('#publicationDate').val(),
       title: $('#title').val(),
@@ -124,11 +114,11 @@ var form = {
     return rtl;
   },
 
-  fill: function(data, category) {
+  fill: function(data) {
     this.empty();
 
-    $('#category')[0].value = category;
-    $('#bookType')[0].value = data['bookType'];
+    $('#bookClassification').val(data['categoryId']);
+    $('#bookType').val(data['bookType']);
     $('#author').val(data['author']);
     $('#publicationDate').val(data['publicationDate']);
     $('#title').val(data['title']);
@@ -164,12 +154,51 @@ var form = {
       });
     });
 
+    $('#editBtn').unbind('click');
+    $('#editBtn').click(function() {
+      var request = outside.get();
+      var id = $(this).data('id');
+      var bookIndex = $(this).data('bookIndex');
+      request.id = id;
+
+      console.log(request);
+      $.post(`${web_root}/api/book/update`, request, function(response) {
+        console.log(response);
+        Materialize.toast('更新成功', 2000);
+
+        paging.drawContent();
+        paging.drawPage();
+      }).fail(function() {
+        Materialize.toast('更新失敗', 2000);
+      });   
+    });
+
+    $('.deleteBtn').unbind('click');
+    $('.deleteBtn').click(function() {
+      var request = {};
+      var id = $(this).data('bookid');
+      var bookIndex = $(this).data('bookindex');
+
+      request.id = id;
+      console.log(request);
+      $.post(`${web_root}/api/book/delete`, request, function(response) {
+        console.log(response);
+        Materialize.toast('刪除成功', 2000);
+        book_data.splice(bookIndex, 1);
+
+        paging.drawContent();
+        paging.drawPage();
+      }).fail(function() {
+        Materialize.toast('刪除失敗', 2000);
+      });   
+    });
+
     $('#open-edit-modal').unbind('click');
     $('#open-edit-modal').click(function() {
       $('#edit-modal .create').css('display', 'block');
       $('#edit-modal .edit').css('display', 'none');
       outside.empty();
-
+      
       $('#edit-modal').modal('open');
     });
 
@@ -179,71 +208,24 @@ var form = {
       $('#edit-modal .edit').css('display', 'block');
 
       var bookIndex = $(this).data('bookindex');
-      var category = $(this).data('category');
-
-      outside.fill(book_data[bookIndex], category);
-
+      outside.fill(book_data[bookIndex]);
+      
+      $('#editBtn').data('id', book_data[bookIndex]['id']);
+      $('#editBtn').data('bookindex', bookIndex);
       $('#edit-modal').modal('open');
     });
   }
 };
 
-async function getData() {
-  var config = {method: 'GET'};
-  var book_res = await fetch(`${web_root}/api/book/getAll`, config);
-  var type_res = await fetch(`${web_root}/api/type/getAll`, config);
-  var category_res = await fetch(`${web_root}/api/category/getAll`, config);
-  var classify_res = await fetch(`${web_root}/api/classify/getAll`, config);
-
-  if(book_res.ok && type_res.ok && category_res.ok && classify_res.ok) {
-    await book_res.json().then((data) => {
-      book_data = data.bookData;
-    });
-
-    await type_res.json().then((data) => {
-      for(var i=0; i<data.typeData.length; i++) {
-        type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
-      }
-    });
-
-    await category_res.json().then((data) => {
-      for(var i=0; i<data.categoryData.length; i++) {
-        category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
-      }
-    });
-
-    await classify_res.json().then((data) => {
-      classify_data = data.classifyData;
-      for(var i=0; i<data.classifyData.length; i++) {
-        classify_data[i]['index'] = i;
-      }
-    });
-  }
-}
-
-function drawSelect() {
-  var text = '';
-
-  for(var item in type_data) {
-    text += `<option value="${item}">${type_data[item]}</option>`
-  }
-  $('#bookType').html(text);
-
-  text = '';
-  for(var item in category_data) {
-    text += `<option value="${item}">${category_data[item]}</option>`
-  }
-  $('#category').html(text);
-}
-
 async function init() {
   await getData();
-  drawSelect();
   
-  console.log(classify_data);
-  classify_data.sort(cmp);
-  console.log(classify_data);
+  // init filter
+  filter.init();
+  $('#search-all').prop('checked', true);
+  $('#search-all').change();
 
+  // init list
   paging.drawContent();
   paging.drawPage();
 
@@ -252,10 +234,6 @@ async function init() {
     startingTop: '0%',
     endingTop: '0%'
   });
-}
-
-function cmp(a, b) {
-  return (a['categoryId'] - b['categoryId']) || (a['typeId'] - b['typeId']) || (a['bookId'] - b['bookId']);
 }
 
 (function() {
