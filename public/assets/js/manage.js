@@ -143,7 +143,7 @@ var form = {
     $('#thesis').val(data['thesis']);
     $('#ISBN').val(data['ISBN']);
     $('#ISSN').val(data['ISSN']);
-    
+
     Materialize.updateTextFields();
     $('select').material_select();
   },
