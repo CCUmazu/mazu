@@ -76,7 +76,7 @@ var filter = {
         book = without_filter_book_data[i];
         exist = false;
         for(var j=0; j<book.categoryId.length; j++) {
-          for(var k=0; k<categories.length; k++) {
+          for(var k=0; categories!=null && k<categories.length; k++) {
             if(categories[k] == book.categoryId[j]) {
               exist = true;
               break;
@@ -142,6 +142,8 @@ var filter = {
         $('.without-search-all').css('display', 'none');
       } else {
         $('.without-search-all').css('display', 'block');
+        $('#search-category').val([]);
+        $('select').material_select();
       }
     });
 
@@ -199,6 +201,11 @@ var concat = {
           text += `${str.chapter}:`;
         }
         break;
+      case 5:
+        if(!this.isEmpty(str)) {
+          text += `收於《${str}》。`
+        }
+        break;
       case 11:// English Mode
         if(!this.isEmpty(str)) {
           text += `${str}. `;
@@ -232,13 +239,26 @@ var concat = {
       ((String(book.bookName).match(rules)) === null) || 
       ((String(book.title).match(rules)) === null)
     ) {// Chinese
-      return this.ChineseMode(book);
+      switch(book.typeId) {
+        case 1:
+          return this.ChineseMode1(book);
+          break;
+        case 2:
+          return this.ChineseMode2(book);
+          break;
+        case 3:
+          return this.ChineseMode3(book);
+          break;
+        case 4:
+          return this.ChineseMode4(book);
+          break;
+      }
     } else {// English
       return this.EnglishMode(book);
     }
   },
 
-  ChineseMode: function(book) {
+  ChineseMode1: function(book) {
     var text = '';
     
     text += this.addChars(book.author, 0);
@@ -255,6 +275,61 @@ var concat = {
 
     return text;
   },
+
+  ChineseMode2: function(book) {
+    var text = '';
+    
+    text += this.addChars(book.author, 0);
+    text += this.addChars(book.publicationDate, 0);
+    text += this.addChars(book.title, 1);
+    text += this.addChars(book.bookName, 5);
+    text += this.addChars(book.editor, 0);
+    text += this.addChars(book.publishingLocation, 3);
+    text += this.addChars(book.publisher, 0);
+    text += this.addChars(book.department, 0);
+    text += this.addChars(book.thesis, 0);
+    text += this.addChars(book, 4);
+    text += this.addChars(book.page, 0);
+
+    return text;
+  },
+
+  ChineseMode3: function(book) {
+    var text = '';
+    
+    text += this.addChars(book.author, 0);
+    text += this.addChars(book.publicationDate, 0);
+    text += this.addChars(book.title, 1);
+    text += this.addChars(book.bookName, 2);
+    text += this.addChars(book.editor, 0);
+    text += this.addChars(book.publishingLocation, 3);
+    text += this.addChars(book.publisher, 0);
+    text += this.addChars(book.department, 0);
+    text += this.addChars(book.thesis, 0);
+    text += this.addChars(book, 4);
+    text += this.addChars(book.page, 0);
+
+    return text;
+  },
+
+  ChineseMode4: function(book) {
+    var text = '';
+    
+    text += this.addChars(book.author, 0);
+    text += this.addChars(book.publicationDate, 0);
+    text += this.addChars(book.title, 1);
+    text += this.addChars(book.bookName, 2);
+    text += this.addChars(book.editor, 0);
+    text += this.addChars(book.publishingLocation, 3);
+    text += this.addChars(book.publisher, 0);
+    text += this.addChars(book.department, 0);
+    text += this.addChars(book.thesis, 0);
+    text += this.addChars(book, 4);
+    text += this.addChars(book.page, 0);
+
+    return text;
+  },
+
 
   EnglishMode: function(book) {
     var text = '';

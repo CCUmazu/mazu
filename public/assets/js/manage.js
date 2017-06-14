@@ -25,8 +25,8 @@ var paging = {
       text += `</div>`;// end s9
       text += `<div class="col s3">`;
       text += `<div class="row button-wrapper center">`;
-      text += `<button class="btn btn-default lime result-item-content" data-bookindex="${i}">編輯</button>`;
-      text += `<button class="btn btn-default red deleteBtn" data-bookid="${book.id}" data.bookindex="${i}">刪除</button>`;
+      text += `<div class="col s12"><button class="btn btn-default lime result-item-content" data-bookindex="${i}">編輯</button></div>`;
+      text += `<div class="col s12"><button class="btn btn-default red deleteBtn" data-bookid="${book.id}" data.bookindex="${i}">刪除</button></div>`;
       text += `</div>`;// end button-wrapper
       text += `</div>`;// end s3
       text += `</div>`;// end result-item
@@ -72,6 +72,7 @@ var paging = {
 
 var form = {
   empty: function() {
+    $('#bookClassification').val([]),
     $('#author').val('');
     $('#publicationDate').val('');
     $('#title').val('');

@@ -27,7 +27,8 @@ var paging = {
       text += `</div>`;// end s9
       text += `<div class="col s3">`;
       text += `<div class="row button-wrapper center">`;
-      text += `<a href="${web_root}/api/download/ris/${book.id}"><button class="btn btn-default">匯出 RIS</button></a>`;
+      text += `<div class="col s12"><a href="${web_root}/api/download/ris/${book.id}"><button class="btn btn-default">匯出 RIS</button></a></div>`;
+      text += `<div class="col s12"><button class="btn btn-default light-green copy" data-value="${concat_str}">複製</button></div>`
       text += `</div>`;// end button-wrapper
       text += `</div>`;// end s3
       text += `</div>`;// end result-item
@@ -68,6 +69,21 @@ var paging = {
       outside.curPage = $(this).data('pindex');
       outside.drawContent();
       outside.drawPage();
+    });
+
+    $('.copy').unbind('click');
+    $('.copy').click(function() {
+      // Get value
+      var value = $(this).data('value');
+
+      $('body').append('<textarea id="clip_area"></textarea>');
+      var clip_area = $('#clip_area');
+      clip_area.text(value);
+      clip_area.select();
+      document.execCommand('copy');
+      clip_area.remove();
+
+      Materialize.toast('已複製至您的剪貼簿', 2000);
     });
   }
 };
