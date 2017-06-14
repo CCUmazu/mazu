@@ -139,13 +139,39 @@ var form = {
     $('select').material_select();
   },
 
+  valid: function() {
+    var result = true;
+
+    var category = $('#bookClassification').val();
+    var author = $('#author').val();
+    var date = $('#publicationDate').val();
+
+    if(category == null) {
+      result = false;
+    }
+
+    if(author == '') {
+      result = false;
+    }
+
+    if(date == '') {
+      result = false;
+    }
+
+    return result;
+  },
+
   formEvent: function() {
     var outside = this;
 
     $('#createBtn').unbind('click');
     $('#createBtn').click(function() {
       var request = outside.get();
-
+      
+      if(outside.valid() == false) {
+        Materialize.toast('您有必填欄位沒填', 2000);
+        return;
+      }
       console.log(request);
       $.post(`${web_root}/api/book/create`, request, function(response) {
         console.log(response);
@@ -161,11 +187,16 @@ var form = {
       var id = $(this).data('id');
       var bookIndex = $(this).data('bookIndex');
       request.id = id;
-
+      
+      if(outside.valid() == false) {
+        Materialize.toast('您有必填欄位沒填', 2000);
+        return;
+      }
       console.log(request);
       $.post(`${web_root}/api/book/update`, request, function(response) {
         console.log(response);
         Materialize.toast('更新成功', 2000);
+        book_data.splice(bookIndex, 1);
 
         paging.drawContent();
         paging.drawPage();

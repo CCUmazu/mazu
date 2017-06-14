@@ -25,7 +25,8 @@
           </div>
         </div>
         <div class="row">
-          <div class="input-field col s12">
+          <div class="col s1">*</div>
+          <div class="input-field col s11">
             <input id="author" type="text" class="validate">
             <label for="author">作者</label>
           </div>
@@ -37,7 +38,8 @@
           </div>
         </div>
         <div class="row">
-          <div class="input-field col s12">
+          <div class="col s1">*</div>
+          <div class="input-field col s11">
             <input id="publicationDate" type="text" class="validate">
             <label for="publicationDate">年份</label>
           </div>

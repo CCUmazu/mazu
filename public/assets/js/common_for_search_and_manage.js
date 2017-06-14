@@ -170,27 +170,28 @@ var concat = {
   },
   
   addChars: function(str, chars) {
-    var special='〈〉。《》';
+    var special='〈〉，。《》';
     var text = '';
+    var temp = '';
 
     switch(chars) {
       case 0:// Chinese Mode
-        if(!this.isEmpty(str)) {
+        if(!this.isEmpty(str)) {// 一般
           text += `${str}。`;
         }
         break;
       case 1:
-        if(!this.isEmpty(str)) {
+        if(!this.isEmpty(str)) {// 篇名
           text += `〈${str}〉。`;
         }
         break;
       case 2:
-        if(!this.isEmpty(str)) {
+        if(!this.isEmpty(str)) {// 書名
           text += `《${str}》。`
         }
         break;
       case 3:
-        if(!this.isEmpty(str)) {
+        if(!this.isEmpty(str)) {// 出版地點
           text += `${str}：`
         }
         break;
@@ -202,18 +203,45 @@ var concat = {
         }
         break;
       case 5:
-        if(!this.isEmpty(str)) {
+        if(!this.isEmpty(str)) {// 專書論文書名
           text += `收於《${str}》。`
         }
         break;
+      case 6:
+        if(!this.isEmpty(str)) {// 專書論文編輯者
+          text += `${str}主編。`
+        }
+        break;
+      case 7:
+        if(!this.isEmpty(str.publisher) && !this.isEmpty(str.page)) {// 專書論文最後一段
+          text += `${str.publisher}，${str.page}。`;
+        } else if(!this.isEmpty(str.publisher)) {
+          text += `${str.publisher}。`;
+        } else {
+          text += `${str.page}。`;
+        }
+        break;
+      case 8:
+        temp = '';
+        temp += this.addChars(str, 4);// get period
+        temp += this.addChars(str.page, 0);// get page
+        temp = temp.slice(0, -1);// remove 。
+
+        if(!this.isEmpty(str.bookName) && !this.isEmpty(temp)) {// 期刊論文最後一段
+          text += `《${str.bookName}》${temp}。`;
+        } else if(!this.isEmpty(str.bookName)) {
+          text += `《${str.bookName}》。`;
+        }
+        
+        break;
       case 11:// English Mode
-        if(!this.isEmpty(str)) {
+        if(!this.isEmpty(str)) {// 英文一般
           text += `${str}. `;
         }
         break;
       case 12:
-        if(!this.isEmpty(str)) {
-          text += `“${str}” `;
+        if(!this.isEmpty(str)) {// 英文篇名
+          text += `"${str}" `;
         }
         break;
       case 13:
@@ -222,7 +250,7 @@ var concat = {
         }
         break;
       case 14:
-        if(!this.isEmpty(str)) {
+        if(!this.isEmpty(str)) {// 英文編輯者
           text += `Edited by ${str}. `;
         }
         break;
@@ -258,7 +286,7 @@ var concat = {
     }
   },
 
-  ChineseMode1: function(book) {
+  ChineseMode1: function(book) {// 專書
     var text = '';
     
     text += this.addChars(book.author, 0);
@@ -276,43 +304,32 @@ var concat = {
     return text;
   },
 
-  ChineseMode2: function(book) {
+  ChineseMode2: function(book) {// 專書論文
     var text = '';
     
     text += this.addChars(book.author, 0);
     text += this.addChars(book.publicationDate, 0);
     text += this.addChars(book.title, 1);
     text += this.addChars(book.bookName, 5);
-    text += this.addChars(book.editor, 0);
+    text += this.addChars(book.editor, 6);
     text += this.addChars(book.publishingLocation, 3);
-    text += this.addChars(book.publisher, 0);
-    text += this.addChars(book.department, 0);
-    text += this.addChars(book.thesis, 0);
-    text += this.addChars(book, 4);
-    text += this.addChars(book.page, 0);
+    text += this.addChars(book, 7);
 
     return text;
   },
 
-  ChineseMode3: function(book) {
+  ChineseMode3: function(book) {// 期刊論
     var text = '';
     
     text += this.addChars(book.author, 0);
     text += this.addChars(book.publicationDate, 0);
     text += this.addChars(book.title, 1);
-    text += this.addChars(book.bookName, 2);
-    text += this.addChars(book.editor, 0);
-    text += this.addChars(book.publishingLocation, 3);
-    text += this.addChars(book.publisher, 0);
-    text += this.addChars(book.department, 0);
-    text += this.addChars(book.thesis, 0);
-    text += this.addChars(book, 4);
-    text += this.addChars(book.page, 0);
+    text += this.addChars(book, 8);
 
     return text;
   },
 
-  ChineseMode4: function(book) {
+  ChineseMode4: function(book) {// 碩博士論文
     var text = '';
     
     text += this.addChars(book.author, 0);
