@@ -197,9 +197,9 @@ var concat = {
         break;
       case 4:
         if((!this.isEmpty(str.chapter)) && (!this.isEmpty(str.period))) {
-          text += `${str.chapter}(${str.period}):`;
+          text += `${str.chapter}(${str.period}): `;
         } else if(!this.isEmpty(str.chapter)) {
-          text += `${str.chapter}:`;
+          text += `${str.chapter}: `;
         }
         break;
       case 5:
@@ -322,7 +322,7 @@ var concat = {
     var text = '';
     
     text += this.addChars(book.author, 0);
-    text += this.addChars(book.publicationDate, 0);
+    text += this.addChars(String(book.publicationDate), 0);
     text += this.addChars(book.title, 1);
     text += this.addChars(book, 8);
 
