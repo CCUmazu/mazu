@@ -21,6 +21,7 @@ async function getData() {
       book_data = data.bookData;
     });
   }
+  console.log(book_data);
   
   // get data from dom
   var data = {};
@@ -49,15 +50,21 @@ async function getData() {
   }
  
   // connection book and classify
+  swit = false;
   for(var i=0; i<book_data.length; i++) {
     bookId = book_data[i].id;
-    book_data[i]['categoryId'] = classify_data[bookId]['categoryId'];
-    book_data[i]['typeId'] = classify_data[bookId]['typeId']
-    
-    // copy to maintain raw data
-    without_filter_book_data.push(book_data[i]);
+    if(classify_data[bookId]) {
+        swit = true;
+        book_data[i]['categoryId'] = classify_data[bookId]['categoryId'];
+        book_data[i]['typeId'] = classify_data[bookId]['typeId'];
+
+        // copy to maintain raw data
+        without_filter_book_data.push(book_data[i]);
+    }
   }
-  book_data.sort(cmp);
+  if(swit) {
+    book_data.sort(cmp);
+  }
 }
 
 var filter = {
@@ -369,16 +376,18 @@ var concat = {
   },
 
   categoryStr: function(categories) {
-    var text = '';
-    for(var i=0; i<categories.length; i++) {
-      if(i+1 != categories.length) {// if not end, need a comma
-        text += `${category_data[categories[i]]}, `
-      } else {
-        text += `${category_data[categories[i]]}`
-      }
-    }
+      var text = '';
 
-    return text;
+      if(categories) {
+        for (var i = 0; i < categories.length; i++) {
+            if (i + 1 != categories.length) {// if not end, need a comma
+                text += `${category_data[categories[i]]}, `
+            } else {
+                text += `${category_data[categories[i]]}`
+            }
+        }
+      }
+      return text;
   }
 };
 

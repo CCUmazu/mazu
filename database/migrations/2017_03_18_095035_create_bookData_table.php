@@ -19,7 +19,7 @@ class CreateBookDataTable extends Migration
             $table->foreign('bookType')->references('id')->on('bookType');
 
             $table->string('author');
-            $table->integer('publicationDate');
+            $table->string('publicationDate');
             $table->string('title');
             $table->string('bookName');
             $table->string('editor');
