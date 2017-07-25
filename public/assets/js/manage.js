@@ -40,8 +40,12 @@ var paging = {
     var text = '';
     var i;
     var j;
-
-    var totalPage = Math.floor(book_data.length / this.perPage) + 1;
+    
+    if((book_data.length % this.perPage) == 0) {
+      var totalPage = Math.floor(book_data.length / this.perPage);
+    } else {
+      var totalPage = Math.floor(book_data.length / this.perPage) + 1;
+    }
     var leftPage = Math.max(1, this.curPage - 5);
     var rightPage = Math.min(leftPage + 9, totalPage);
 
@@ -250,7 +254,7 @@ var form = {
 };
 
 async function init() {
-  await getData();
+  getDataFromDom();
   
   // init filter
   filter.init();

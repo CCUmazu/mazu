@@ -12,6 +12,7 @@ use App\Http\Requests;
 use App\Objects\Category;
 use App\Objects\Type;
 use App\Objects\Classify;
+use App\Objects\Book;
 
 class WebController extends Controller
 {
@@ -20,8 +21,10 @@ class WebController extends Controller
         $types = Type::Get();
         $categories = Category::Get();
         $classify = Classify::Get();
+        $books = Book::Get();
 
         return view('search')
+            ->with('books', $books['bookData'])
             ->with('types', $types['typeData'])
             ->with('categories', $categories['categoryData'])
             ->with('classify', $classify['classifyData']);
@@ -35,8 +38,10 @@ class WebController extends Controller
         $types = Type::Get();
         $categories = Category::Get();
         $classify = Classify::Get();
+        $books = Book::Get();
 
         return view('manage')
+            ->with('books', $books['bookData'])
             ->with('types', $types['typeData'])
             ->with('categories', $categories['categoryData'])
             ->with('classify', $classify['classifyData']);

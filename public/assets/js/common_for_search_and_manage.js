@@ -11,28 +11,21 @@ function cmp(a, b) {
   return (a['categoryId'][0] - b['categoryId'][0]) || (a['typeId'] - b['typeId']) || (a['id'] - b['id']);
 }
 
-async function getData() {
-  // get data from server
-  var config = {method: 'GET'};
-  var book_res = await fetch(`${web_root}/api/book/getAll`, config);
-
-  if(book_res.ok) {
-    await book_res.json().then((data) => {
-      book_data = data.bookData;
-    });
-  }
-  console.log(book_data);
-  
+function getDataFromDom() {
   // get data from dom
   var data = {};
-
+  
+  book_data = JSON.parse($('#books').val());
   data.typeData = JSON.parse($('#types').val());
   data.categoryData = JSON.parse($('#categories').val());
   data.classifyData = JSON.parse($('#classify').val());
+
+  // classification
   for(var i=0; i<data.typeData.length; i++) {
     type_data[data.typeData[i]['id']] = data.typeData[i]['type'];
   }
   for(var i=0; i<data.categoryData.length; i++) {
+    // map category_id and name
     category_data[data.categoryData[i]['id']] = data.categoryData[i]['name'];
   }
   for(var i=0; i<data.classifyData.length; i++) {
@@ -64,6 +57,18 @@ async function getData() {
   }
   if(swit) {
     book_data.sort(cmp);
+  }
+}
+
+async function getDataFromServer() {
+  // get data from server
+  var config = {method: 'GET'};
+  var book_res = await fetch(`${web_root}/api/book/getAll`, config);
+
+  if(book_res.ok) {
+    await book_res.json().then((data) => {
+      book_data = data.bookData;
+    });
   }
 }
 
@@ -131,6 +136,7 @@ var filter = {
       }
     }
     
+    console.log('search number:' + temp_data.length);
     // write back
     book_data = [];
     for(var i=0; i<temp_data.length; i++) {
@@ -180,7 +186,9 @@ var concat = {
     var special='〈〉，。《》';
     var text = '';
     var temp = '';
-
+    
+    // 並非每一次都要檢查它是否為空
+    // 因為有可能是好幾個物件
     switch(chars) {
       case 0:// Chinese Mode
         if(!this.isEmpty(str)) {// 一般

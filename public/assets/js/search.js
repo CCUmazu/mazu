@@ -90,7 +90,7 @@ var paging = {
 
 async function init() {
   // get data
-  await getData();
+  getDataFromDom();
   
   // init filter
   filter.init();
