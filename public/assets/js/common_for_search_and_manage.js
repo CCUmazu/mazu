@@ -171,6 +171,7 @@ var filter = {
       book_data.sort(cmp);
 
       // draw
+      pagin.curPage = 1;
       paging.drawContent();
       paging.drawPage();
     });
